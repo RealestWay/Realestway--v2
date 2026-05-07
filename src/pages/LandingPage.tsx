@@ -719,38 +719,42 @@ export default function LandingPage() {
               { 
                 title: 'Rent', 
                 description: 'Find apartments for yearly rent', 
-                image: homeData.previews?.rent?.[0] || '/building1.jpg', 
+                image: homeData.previews?.rent?.[0], 
                 href: '/search?category=rent',
                 previewImages: homeData.previews?.rent || [],
                 count: homeData.counts?.rent ? (homeData.counts.rent > 999 ? `${(homeData.counts.rent / 1000).toFixed(1)}k` : homeData.counts.rent.toString()) : '0',
-                priceOverlay: null
+                priceOverlay: null,
+                loading: loading
               },
               { 
                 title: 'Buy', 
                 description: 'Own your home with premium listings', 
-                image: homeData.previews?.buy?.[0] || '/building2.jpg', 
+                image: homeData.previews?.buy?.[0], 
                 href: '/search?category=sale',
                 previewImages: homeData.previews?.buy || [],
                 count: homeData.counts?.sale ? (homeData.counts.sale > 999 ? `${(homeData.counts.sale / 1000).toFixed(1)}k` : homeData.counts.sale.toString()) : '0',
-                priceOverlay: null
+                priceOverlay: null,
+                loading: loading
               },
               { 
                 title: 'Shortlet', 
                 description: 'Comfortable stays for short durations', 
-                image: homeData.previews?.shortlet?.[0] || '/building3.jpg', 
+                image: homeData.previews?.shortlet?.[0], 
                 href: '/search?category=shortlet',
                 previewImages: homeData.previews?.shortlet || [],
                 count: homeData.counts?.shortlet ? (homeData.counts.shortlet > 999 ? `${(homeData.counts.shortlet / 1000).toFixed(1)}k` : homeData.counts.shortlet.toString()) : '0',
-                priceOverlay: null
+                priceOverlay: null,
+                loading: loading
               },
               { 
                 title: 'Land', 
                 description: 'Invest in the future with prime land', 
-                image: homeData.previews?.land?.[0] || '/building4.jpg', 
+                image: homeData.previews?.land?.[0], 
                 href: '/search?category=sale&house_type[]=Land',
                 previewImages: homeData.previews?.land || [],
                 count: homeData.counts?.land ? (homeData.counts.land > 999 ? `${(homeData.counts.land / 1000).toFixed(1)}k` : homeData.counts.land.toString()) : '0',
-                priceOverlay: null
+                priceOverlay: null,
+                loading: loading
               }
             ].map((cat, idx) => (
               <Grid key={idx} size={{ xs: 12, sm: 6, md: 3 }}>

@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Next.js
+.next
+out
+build
+
+# Environment variables
+.env
+.env*.local
+
+# Debug / dev artifacts (never commit these)
+eslint_errors*.json
+eslint_errors*.txt
+ts_errors*.txt
+tsconfig.tsbuildinfo

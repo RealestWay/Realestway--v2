@@ -11,10 +11,11 @@ interface CategoryCardProps {
   title: string;
   description: string;
   count?: string;
-  image: string;
-  previewImages: string[];
-  href: string;
+  image?: string;
+  previewImages?: string[];
+  href?: string;
   priceOverlay?: string;
+  loading?: boolean;
 }
 
 const CardContainer = styled(Box)(({ theme }) => ({
@@ -138,13 +139,39 @@ export default function CategoryCard({
   title, 
   description, 
   count, 
-  image, 
-  previewImages, 
-  href,
-  priceOverlay 
+  image = '', 
+  previewImages = [], 
+  href = '#',
+  priceOverlay,
+  loading = false
 }: CategoryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
+
+  if (loading) {
+    return (
+      <CardContainer sx={{ pointerEvents: 'none' }}>
+        <Box sx={{ position: 'absolute', inset: 0, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gridTemplateRows: 'repeat(2, 1fr)', gap: '2px' }}>
+          {[...Array(4)].map((_, i) => (
+            <Box key={i} sx={{ bgcolor: 'rgba(0,0,0,0.06)', animation: 'pulse 1.5s infinite ease-in-out' }} />
+          ))}
+        </Box>
+        <Overlay sx={{ background: 'linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 100%)' }} />
+        <Box sx={{ position: 'absolute', bottom: 24, left: 24, right: 24, zIndex: 3 }}>
+          <Box sx={{ width: '60%', height: 32, bgcolor: 'rgba(255,255,255,0.2)', borderRadius: '8px', mb: 1 }} />
+          <Box sx={{ width: '80%', height: 16, bgcolor: 'rgba(255,255,255,0.15)', borderRadius: '4px', mb: 2 }} />
+          <Box sx={{ width: '40%', height: 28, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: '100px' }} />
+        </Box>
+        <style>{`
+          @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.5; }
+          }
+        `}</style>
+      </CardContainer>
+    );
+  }
 
   const handleMouseEnter = () => {
     setIsHovered(true);
