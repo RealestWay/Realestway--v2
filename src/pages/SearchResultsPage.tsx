@@ -205,7 +205,7 @@ export default function SearchResultsPage() {
         ref={stickyRef}
         sx={{ 
           position: 'sticky', 
-          top: { xs: 54, sm: 62, md: 0 }, 
+          top: 0, 
           zIndex: 1100, 
           bgcolor: 'white', 
           borderBottom: '1px solid', 

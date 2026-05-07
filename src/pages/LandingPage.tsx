@@ -11,6 +11,8 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
+import IconButton from '@mui/material/IconButton';
+import Collapse from '@mui/material/Collapse';
 
 import PropertyCard from '../components/property/PropertyCard';
 import PropertySkeleton from '../components/property/PropertySkeleton';
@@ -22,6 +24,8 @@ import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import GroupsIcon from '@mui/icons-material/Groups';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import TuneIcon from '@mui/icons-material/Tune';
 import { useUserLocation } from '../hooks/useUserLocation';
 import { useAuth } from '../context/AuthContext';
 import HeroFilterBar from '../components/property/HeroFilterBar';
@@ -183,6 +187,7 @@ export default function LandingPage() {
   /* Scroll state — triggers hero collapse */
   const [scrolled,   setScrolled]   = useState(false);
   const [filterTop,  setFilterTop]  = useState(false);   // when filter should be sticky
+  const [isStickyFilterExpanded, setIsStickyFilterExpanded] = useState(true);
   const filterRef   = useRef<HTMLDivElement>(null);
   const heroRef     = useRef<HTMLDivElement>(null);
 
@@ -411,7 +416,13 @@ export default function LandingPage() {
       /* sticky filter: when hero bottom scrolls above viewport */
       if (heroRef.current) {
         const heroBottom = heroRef.current.getBoundingClientRect().bottom;
-        setFilterTop(heroBottom < NAVBAR_H + 60);
+        const isCurrentlyFilterTop = heroBottom < NAVBAR_H + 60;
+        setFilterTop(isCurrentlyFilterTop);
+        
+        // Reset expansion state when scrolling back up so it's expanded by default next time
+        if (!isCurrentlyFilterTop) {
+          setIsStickyFilterExpanded(true);
+        }
       }
     };
 
@@ -433,44 +444,71 @@ export default function LandingPage() {
           transform: filterTop
             ? 'translateX(-50%) translateY(8px)'
             : 'translateX(-50%) translateY(-130%)',
-          width: '90%',
+          width: { xs: isStickyFilterExpanded ? '90%' : '54px', md: '90%' },
+          height: { xs: isStickyFilterExpanded ? 'auto' : '54px', md: 'auto' },
           zIndex: 1100,
           bgcolor: 'white',
-          borderRadius: '12px',
+          borderRadius: { xs: isStickyFilterExpanded ? '12px' : '27px', md: '12px' },
           boxShadow: '0 4px 24px rgba(0,0,0,0.13)',
-          px: { xs: 2, md: 3 },
-          py: 1.25,
-          transition: 'transform 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease, visibility 0s linear ' + (filterTop ? '0s' : '0.4s'),
+          px: { xs: isStickyFilterExpanded ? 2 : 0, md: 3 },
+          py: { xs: isStickyFilterExpanded ? 1.25 : 0, md: 1.25 },
+          transition: 'all 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease, visibility 0s linear ' + (filterTop ? '0s' : '0.4s'),
           opacity: filterTop ? 1 : 0,
           visibility: filterTop ? 'visible' : 'hidden',
           display: 'flex',
           alignItems: 'center',
-          gap: 2,
+          justifyContent: 'center',
+          gap: isStickyFilterExpanded ? 2 : 0,
+          overflow: 'hidden'
         }}
       >
-        {/* agent badge inline */}
-        <Box
-          sx={{
-            display: { xs: 'none', lg: 'inline-flex' },
-            alignItems: 'center',
-            gap: 0.8,
-            bgcolor: 'rgba(0,162,86,0.08)',
-            border: '1px solid rgba(0,162,86,0.2)',
-            borderRadius: '100px',
-            px: 1.5,
-            py: 0.55,
-            flexShrink: 0,
-          }}
-        >
-          <GroupsIcon sx={{ fontSize: 15, color: 'primary.main' }} />
-          <Typography sx={{ fontSize: '0.72rem', fontWeight: 700, color: 'primary.main', whiteSpace: 'nowrap' }}>
-            1,000+ Agents
-          </Typography>
+        <Box sx={{ 
+          display: { xs: isStickyFilterExpanded ? 'flex' : 'none', md: 'flex' }, 
+          alignItems: 'center', 
+          gap: 2, 
+          flex: 1 
+        }}>
+          {/* agent badge inline */}
+          <Box
+            sx={{
+              display: { xs: 'none', lg: 'inline-flex' },
+              alignItems: 'center',
+              gap: 0.8,
+              bgcolor: 'rgba(0,162,86,0.08)',
+              border: '1px solid rgba(0,162,86,0.2)',
+              borderRadius: '100px',
+              px: 1.5,
+              py: 0.55,
+              flexShrink: 0,
+            }}
+          >
+            <GroupsIcon sx={{ fontSize: 15, color: 'primary.main' }} />
+            <Typography sx={{ fontSize: '0.72rem', fontWeight: 700, color: 'primary.main', whiteSpace: 'nowrap' }}>
+              1,000+ Agents
+            </Typography>
+          </Box>
+
+          <Box sx={{ flex: 1 }}>
+            <HeroFilterBar 
+              compact 
+              onToggle={() => setIsStickyFilterExpanded(false)} 
+            />
+          </Box>
         </Box>
 
-        <Box sx={{ flex: 1 }}>
-          <HeroFilterBar compact />
-        </Box>
+        {/* Mobile "Show" Toggle Button (Only visible when collapsed) */}
+        {!isStickyFilterExpanded && (
+          <IconButton
+            onClick={() => setIsStickyFilterExpanded(true)}
+            sx={{ 
+              display: { xs: 'flex', md: 'none' },
+              color: 'primary.main',
+              transition: '0.3s'
+            }}
+          >
+            <TuneIcon />
+          </IconButton>
+        )}
       </Box>
 
       {/* ══ HERO SECTION ══ */}

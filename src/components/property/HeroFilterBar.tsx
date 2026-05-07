@@ -11,6 +11,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import SearchIcon from '@mui/icons-material/Search';
+import IconButton from '@mui/material/IconButton';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { PROPERTY_TYPES, PRICE_RANGES } from '../../data/mockData';
 
 interface HeroFilterBarProps {
@@ -22,9 +24,10 @@ interface HeroFilterBarProps {
     category?: 'rent' | 'sale';
   };
   onSearch?: (values: { location: string; type: string | string[]; priceRange: string; category: 'rent' | 'sale' }) => void;
+  onToggle?: () => void;
 }
 
-export default function HeroFilterBar({ compact = false, initialValues = {}, onSearch }: HeroFilterBarProps) {
+export default function HeroFilterBar({ compact = false, initialValues = {}, onSearch, onToggle }: HeroFilterBarProps) {
   const router = useRouter();
   const [tab, setTab] = useState<'Rent' | 'Buy'>(initialValues.category === 'sale' ? 'Buy' : 'Rent');
   const [location, setLocation] = useState(initialValues.location || '');
@@ -152,25 +155,44 @@ export default function HeroFilterBar({ compact = false, initialValues = {}, onS
           </Select>
         </FormControl>
 
-        {/* Search */}
-        <Button
-          variant="contained"
-          size="small"
-          onClick={handleSearch}
-          startIcon={<SearchIcon sx={{ fontSize: '16px !important' }} />}
-          sx={{
-            borderRadius: '8px',
-            bgcolor: 'primary.main',
-            fontWeight: 700,
-            px: 2.5,
-            py: 0.9,
-            flexShrink: 0,
-            '&:hover': { bgcolor: 'primary.dark' },
-            boxShadow: '0 3px 14px rgba(0,162,86,0.32)',
-          }}
-        >
-          Search
-        </Button>
+        {/* Search & Toggle Group */}
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexShrink: 0 }}>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={handleSearch}
+            startIcon={<SearchIcon sx={{ fontSize: '16px !important' }} />}
+            sx={{
+              borderRadius: '8px',
+              bgcolor: 'primary.main',
+              fontWeight: 700,
+              px: 2.5,
+              py: 0.9,
+              flexShrink: 0,
+              '&:hover': { bgcolor: 'primary.dark' },
+              boxShadow: '0 3px 14px rgba(0,162,86,0.32)',
+            }}
+          >
+            Search
+          </Button>
+
+          {onToggle && (
+            <IconButton
+              size="small"
+              onClick={onToggle}
+              sx={{ 
+                display: { xs: 'flex', md: 'none' },
+                color: 'text.secondary',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: '8px',
+                p: 0.7
+              }}
+            >
+              <KeyboardArrowUpIcon fontSize="small" />
+            </IconButton>
+          )}
+        </Box>
       </Box>
     );
   }
