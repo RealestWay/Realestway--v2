@@ -224,7 +224,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
   const bathrooms = getFeatureValue(property.features, 'bathrooms') || property.bathrooms;
   const parking = getFeatureValue(property.features, 'parking');
 
-  const price = property.basic_rent || property.price || 0;
+  const price = property.total_package || property.basic_rent || property.price || 0;
   const images = (property.media?.map((m: any) => m.file_url) || property.media_urls || property.images || []).map((url: string) => ApiService.getMediaUrl(url));
   
   const agencyFee = typeof (property.agency_fee || property.agencyFee) === 'number' && (property.agency_fee || property.agencyFee) <= 100 
@@ -341,8 +341,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
                 />
                 {property.source === 'platform' && (
                   <Chip
-                    label="Verified Listing"
-                    icon={<VerifiedIcon sx={{ fontSize: '14px !important', color: 'white !important' }} />}
+                    label="Platform Listing"
                     sx={{ bgcolor: 'rgba(0,0,0,0.6)', color: 'white', fontWeight: 600, fontSize: '0.8rem' }}
                   />
                 )}
@@ -547,7 +546,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
               sx={{ p: { xs: 2.5, md: 3 }, border: '1px solid', borderColor: 'divider', borderRadius: 3, mb: 3, position: 'sticky', top: 90 }}
             >
               <Typography variant="overline" color="primary" sx={{ display: 'block', mb: 0.5 }}>
-                {property.property_category === 'shortlet' ? 'Shortlet Price' : property.category === 'rent' ? 'Annual Rent' : 'Sale Price'}
+                {property.property_category === 'shortlet' ? 'Shortlet Price' : (property.property_category === 'rent' || property.category === 'rent') ? 'Annual Rent' : 'Sale Price'}
               </Typography>
               <Typography variant="h4" fontWeight={900} color="secondary.main" sx={{ fontFamily: '"Arial Black", sans-serif', mb: 0.5 }}>
                 {formatPrice(price)}
@@ -627,12 +626,9 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
                 <Box sx={{ flex: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                     <Typography variant="subtitle2" fontWeight={700}>{agent?.name || 'Unknown Agent'}</Typography>
-                    {agent?.claimed_at && (agent?.verified || agent?.verified_at) && (
-                      <VerifiedIcon sx={{ fontSize: 14, color: 'primary.main' }} />
-                    )}
                   </Box>
                   <Typography variant="caption" color="text.secondary">
-                    {(agent?.verified || agent?.verified_at) ? 'Verified Agent' : 'Agent'} · {agent?.listingCount || 0} listings
+                    Agent · {agent?.listingCount || 0} listings
                   </Typography>
                 </Box>
               </Box>
@@ -691,7 +687,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
                       {requestSubmitted ? 'Request Submitted ✓' : 'Submit Request to View'}
                     </Button>
                     <Typography variant="caption" color="text.secondary" align="center" sx={{ display: 'block', mt: 0.5, px: 1 }}>
-                      Agent contact is concealed for privacy. Click "Submit Request" to reach them via our verified channel.
+                      Agent contact is concealed for privacy. Click "Submit Request" to reach them via our team.
                     </Typography>
                   </>
                 )}

@@ -229,8 +229,8 @@ const FAQS = [
     a: 'Yes — completely. There are no charges, subscription fees, or hidden costs for searching properties or browsing listings on Realestway. Property seekers can browse, save, and explore listings at no cost. Agents can also create a profile and claim listings free of charge. Our platform is built to connect people with properties, not to take your money.',
   },
   {
-    q: 'Are the properties on Realestway verified?',
-    a: 'We organize listings into two categories: Verified Listings — managed by agents who have claimed and actively update their properties; and Unverified Listings — sourced from external platforms awaiting agent claims. We recommend contacting agents directly and verifying property details before making any commitments.',
+    q: 'Are the properties on Realestway available for viewing?',
+    a: 'We organize listings into categories: Platform Listings — managed by agents who have claimed and actively update their properties; and Community Listings — sourced from external platforms awaiting agent claims. We recommend contacting agents directly and verifying property details before making any commitments.',
   },
   {
     q: 'Is Realestway responsible for transactions between users and agents?',
@@ -449,7 +449,7 @@ export default function AboutPage() {
                   color="text.secondary"
                   sx={{ lineHeight: 1.85, mb: 4, fontSize: '0.96rem' }}
                 >
-                  From verified listings to trusted agents, our focus is on giving you clarity at every step
+                  From detailed listings to community agents, our focus is on giving you clarity at every step
                   of the journey — no hidden charges, no endless back-and-forth, just the easiest way to
                   connect with the right property.
                 </Typography>
@@ -604,9 +604,9 @@ export default function AboutPage() {
           <Grid container spacing={4} justifyContent="center">
             {[
               { value: platformStats.active_listings, suffix: '+', label: 'Active Listings', icon: <HomeWorkOutlinedIcon /> },
-              { value: platformStats.total_agents, suffix: '+', label: 'Verified Agents', icon: <VerifiedOutlinedIcon /> },
+              { value: platformStats.total_agents, suffix: '+', label: 'Community Agents', icon: <PeopleAltOutlinedIcon /> },
               { value: platformStats.cities_count, suffix: ' Cities', label: 'States & Cities', icon: <LocationOnOutlinedIcon /> },
-              { value: platformStats.property_seekers, suffix: '+', label: 'Property Seekers', icon: <PeopleAltOutlinedIcon /> },
+              { value: platformStats.property_seekers, suffix: '+', label: 'Property Seekers', icon: <TrendingUpOutlinedIcon /> },
             ].map((stat, i) => (
               <Grid size={{ xs: 6, sm: 3 }} key={i}>
                 <Box

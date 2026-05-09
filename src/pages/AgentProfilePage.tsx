@@ -183,9 +183,6 @@ export default function AgentProfilePage() {
                   <Typography variant="h4" fontWeight={900} sx={{ fontSize: { xs: '1.5rem', md: '1.75rem' } }}>
                     {businessName}
                   </Typography>
-                  {isVerified && (
-                    <VerifiedIcon color="primary" sx={{ fontSize: 28 }} />
-                  )}
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, color: 'text.secondary' }}>
                   <StarIcon sx={{ fontSize: 18, color: '#FFB400' }} />
@@ -268,7 +265,7 @@ export default function AgentProfilePage() {
                 {isPhoneVerified && (
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, mt: 1, color: 'success.main' }}>
                     <CheckCircleIcon sx={{ fontSize: 16 }} />
-                    <Typography variant="caption" fontWeight={700}>Phone Number Verified</Typography>
+                    <Typography variant="caption" fontWeight={700}>Community Member</Typography>
                   </Box>
                 )}
               </Box>
@@ -289,7 +286,7 @@ export default function AgentProfilePage() {
                   <Box sx={{ width: '100%' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <Typography variant="caption" color="text.secondary" display="block">Phone</Typography>
-                      {isPhoneVerified && <Chip label="Verified" size="small" color="success" sx={{ height: 16, fontSize: '0.65rem', fontWeight: 800, borderRadius: 1 }} />}
+                      {isPhoneVerified && <Chip label="Verified Contact" size="small" color="success" sx={{ height: 16, fontSize: '0.65rem', fontWeight: 800, borderRadius: 1 }} />}
                     </Box>
                     <Typography variant="body2" fontWeight={600}>{profile.phone_number}</Typography>
                   </Box>

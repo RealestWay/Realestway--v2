@@ -6,34 +6,42 @@ import AgentProfilePage from '@/src/pages/AgentProfilePage';
 import ApiService from '@/src/services/api';
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata
+  { params }: Props
 ): Promise<Metadata> {
-  const id = params.id;
+  const { id } = await params;
   
   try {
     const response: any = await ApiService.agent.getProfile(id);
     const profile = response.data;
     const businessName = profile.business_name || profile.name;
-    const description = profile.business_metadata?.description || `View properties listed by ${businessName} on Realestway.`;
-    
+    const description = `Find houses, apartments, and lands listed by ${businessName} on Realestway. ${profile.bio || ''}`.substring(0, 160);
+    const title = `${businessName} | Realestway Real Estate Agency`;
+    const image = profile.avatar || 'https://realestway.com/agent-default.jpg';
+
     return {
-      title: `${businessName} | Realestway Agency Profile`,
-      description: description.substring(0, 160),
+      title,
+      description,
       openGraph: {
-        title: businessName,
-        description: description.substring(0, 160),
-        images: profile.avatar ? [profile.avatar] : [],
+        title,
+        description,
+        images: [image],
         type: 'profile',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: [image],
       },
     };
   } catch (e) {
     return {
       title: 'Agent Profile | Realestway',
+      description: 'View agent profile on Realestway.',
     };
   }
 }

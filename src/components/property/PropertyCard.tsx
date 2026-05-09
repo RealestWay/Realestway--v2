@@ -54,7 +54,7 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
   const parking = getFeatureValue(property.features, 'parking');
 
   const images = (property.media_urls || property.images || []).map((url: string) => ApiService.getMediaUrl(url));
-  const displayPrice = property.basic_rent || property.price || 0;
+  const displayPrice = property.total_package || property.basic_rent || property.price || 0;
   const isVideo = useMemo(() => {
     return (url: string) => url?.toLowerCase().match(/\.(mp4|webm|ogg)$/) || url?.includes('uploads') && url?.split('.').pop()?.match(/(mp4|webm|ogg)$/i);
   }, []);
@@ -170,7 +170,7 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
             label={property.property_category === 'rent' ? 'For Rent' : 'For Sale'}
             size="small"
             sx={{
-              bgcolor: property.category === 'rent' ? 'secondary.main' : 'primary.main',
+              bgcolor: (property.property_category === 'rent' || property.category === 'rent') ? 'secondary.main' : 'primary.main',
               color: 'white',
               fontWeight: 600,
               fontSize: '0.72rem',
@@ -343,9 +343,6 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
                 <Avatar sx={{ width: 26, height: 26, bgcolor: 'secondary.main', fontSize: '0.75rem', fontWeight: 700, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
                   {agent?.name?.charAt(0) || '?'}
                 </Avatar>
-                {agent?.claimed_at && (agent?.verified || agent?.verified_at) && (
-                  <VerifiedIcon sx={{ fontSize: 15, color: 'primary.main' }} />
-                )}
               </Box>
             </Tooltip>
           </Box>

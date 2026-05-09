@@ -5,6 +5,7 @@ import TrackingProvider from '../src/components/TrackingProvider';
 import { AuthProvider } from '../src/context/AuthContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import PWAInstallButton from '../src/components/layout/PWAInstallButton';
+import CookieConsent from '../src/components/layout/CookieConsent';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -18,8 +19,8 @@ import '@fontsource/poppins/700.css';
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 
 export const metadata: Metadata = {
-  title: 'Realestway | Trusted Property Platform',
-  description: 'Verified property listings and trusted agents in Nigeria',
+  title: 'Realestway | Houses, Apartments, Lands for Sale or Rent in Nigeria',
+  description: 'Find houses, apartments, lands, and commercial properties for sale or rent across Nigeria. Browse thousands of listings, connect with agents, and discover properties faster.',
   manifest: '/manifest.json',
   icons: {
     icon: '/favicon.jpg',
@@ -58,6 +59,7 @@ export default function RootLayout({
             <ThemeRegistry>
               <TrackingProvider />
               <PWAInstallButton />
+              <CookieConsent />
               {children}
             </ThemeRegistry>
           </AuthProvider>

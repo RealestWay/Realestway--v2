@@ -118,5 +118,38 @@ export interface BlogPost {
   image: string;
 }
 
-export const mockBlogPosts: BlogPost[] = [];
+export const mockBlogPosts: BlogPost[] = [
+  {
+    id: '1',
+    title: 'Top 10 Locations to Buy Land in Lagos (2026)',
+    excerpt: 'Looking for high ROI? Discover the fastest growing areas in Lagos for land investment this year.',
+    category: 'Real Estate Strategy',
+    date: 'May 12, 2026',
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
+  },
+  {
+    id: '2',
+    title: 'How to Spot Red Flags When Renting in Nigeria',
+    excerpt: 'Don’t get scammed. Learn the essential checklist for inspecting properties and verifying agent claims.',
+    category: 'Renters Guide',
+    date: 'May 10, 2026',
+    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
+  },
+  {
+    id: '3',
+    title: 'Understanding Legal Fees and Agency Percentages',
+    excerpt: 'Confused by the "Total Package"? We break down the standard legal and agency fees in the Nigerian market.',
+    category: 'Market Insights',
+    date: 'May 8, 2026',
+    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80',
+  },
+  {
+    id: '4',
+    title: 'Modern Interior Design Trends for Small Apartments',
+    excerpt: 'Make your studio feel like a mansion with these space-saving interior design tips.',
+    category: 'Lifestyle',
+    date: 'May 5, 2026',
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
+  },
+];
 

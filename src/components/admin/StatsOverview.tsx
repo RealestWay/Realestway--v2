@@ -32,7 +32,7 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
     <Box>
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {counters.map((item) => (
-          <Grid  size={{ xs: 12 }}  size={{ sm: 6, md: 3 }} key={item.label}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={item.label}>
             <Paper
               elevation={0}
               sx={{

@@ -86,7 +86,7 @@ export default function Footer() {
           </Typography>
 
           <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.85)', mb: 5, maxWidth: 640, mx: 'auto', lineHeight: 1.8 }}>
-            List your properties, connect with verified renters and buyers, and grow your real estate business with the support of our trusted platform.
+            List your properties, connect with active renters and buyers, and grow your real estate business on our community-driven platform.
           </Typography>
 
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>

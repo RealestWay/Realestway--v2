@@ -36,7 +36,7 @@ const NAV_LINKS = [
   { label: 'About Us', path: '/about' },
   { label: 'Our Properties', path: '/search' },
   { label: 'House Requests', path: '/requests' },
-  { label: 'Blogs', path: '/blogs' },
+  { label: 'Blog', path: '/blogs' },
   { label: 'Contact Us', path: '/contact' },
 ];
 

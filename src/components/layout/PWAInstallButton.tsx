@@ -19,7 +19,10 @@ export default function PWAInstallButton() {
   useEffect(() => {
     // 1. Detect if already installed
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
-    if (isStandalone) return;
+    if (isStandalone) {
+      setShowButton(false);
+      return;
+    }
 
     // 2. Detect iOS
     const isIPhone = /iPhone|iPad|iPod/.test(navigator.userAgent) && !(window as any).MSStream;

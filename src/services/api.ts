@@ -346,6 +346,22 @@ class ApiService {
         body: JSON.stringify(data),
       }),
   };
+
+  // --- Property Requests ---
+  static requests = {
+    getAll: (params: string = '') => this.request(`/property-requests${params ? `?${params}` : ''}`),
+    
+    create: (data: any) => this.request('/property-requests', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    
+    getAdminAll: (page: number = 1) => this.request(`/admin/property-requests?page=${page}`),
+    
+    delete: (id: string | number) => this.request(`/admin/property-requests/${id}`, {
+      method: 'DELETE',
+    }),
+  };
 }
 
 export default ApiService;
