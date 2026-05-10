@@ -419,7 +419,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                     <LocationOnIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
                     <Typography variant="body2" color="text.secondary">
-                      {property.address}, {property.city}, {property.state}
+                      {property.address || 'N/A'}, {property.city || 'N/A'}, {property.state || 'N/A'}
                     </Typography>
                   </Box>
                 </Box>
@@ -461,15 +461,15 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
               <Divider sx={{ my: 2.5 }} />
 
               <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-                {bedrooms !== null && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <BedIcon sx={{ color: 'primary.main' }} />
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={700}>{String(bedrooms)}</Typography>
-                      <Typography variant="caption" color="text.secondary">Bedrooms</Typography>
-                    </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <BedIcon sx={{ color: 'primary.main' }} />
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight={700}>
+                      {bedrooms !== null ? String(bedrooms) : (property.bedrooms !== undefined ? String(property.bedrooms) : 'N/A')}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">Bedrooms</Typography>
                   </Box>
-                )}
+                </Box>
                 {likesCount > 0 && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <FavoriteIcon sx={{ color: 'primary.main' }} />
@@ -479,24 +479,20 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
                     </Box>
                   </Box>
                 )}
-                {bathrooms !== null && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <BathtubOutlinedIcon sx={{ color: 'primary.main' }} />
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={700}>{String(bathrooms)}</Typography>
-                      <Typography variant="caption" color="text.secondary">Bathrooms</Typography>
-                    </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <BathtubOutlinedIcon sx={{ color: 'primary.main' }} />
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight={700}>{bathrooms !== null ? String(bathrooms) : 'N/A'}</Typography>
+                    <Typography variant="caption" color="text.secondary">Bathrooms</Typography>
                   </Box>
-                )}
-                {parking !== null && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <DirectionsCarOutlinedIcon sx={{ color: 'primary.main' }} />
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={700}>{String(parking)}</Typography>
-                      <Typography variant="caption" color="text.secondary">Parking</Typography>
-                    </Box>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <DirectionsCarOutlinedIcon sx={{ color: 'primary.main' }} />
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight={700}>{parking !== null ? String(parking) : 'N/A'}</Typography>
+                    <Typography variant="caption" color="text.secondary">Parking</Typography>
                   </Box>
-                )}
+                </Box>
                 {property.land_size && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <StraightenIcon sx={{ color: 'primary.main' }} />
@@ -550,7 +546,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
               </Typography>
               <Typography variant="h4" fontWeight={900} color="secondary.main" sx={{ fontFamily: '"Arial Black", sans-serif', mb: 0.5 }}>
                 {formatPrice(price)}
-                {property.property_category !== 'sale' && property.rental_duration && (
+                {property.property_category !== 'sale' && property.rental_duration && property.rental_duration.trim() !== '' && (
                   <Typography component="span" sx={{ fontSize: '0.5em', fontWeight: 600, color: 'text.secondary', ml: 0.5 }}>
                     / {property.rental_duration.replace('per ', '')}
                   </Typography>
@@ -568,7 +564,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
                   <Typography variant="body2" color="text.secondary">Rent / Price</Typography>
                   <Typography variant="body2" fontWeight={600}>
                     {formatPrice(price)}
-                    {property.property_category !== 'sale' && property.rental_duration && (
+                    {property.property_category !== 'sale' && property.rental_duration && property.rental_duration.trim() !== '' && (
                       <span style={{ fontSize: '0.85em', color: 'gray', marginLeft: 4 }}>
                         / {property.rental_duration.replace('per ', '')}
                       </span>

@@ -53,7 +53,7 @@ export default function HeroFilterBar({ compact = false, initialValues = {}, onS
         }
       }
       
-      if (priceRange) p.set('priceRange', priceRange);
+      if (priceRange) p.set('price_range', priceRange);
       router.push(`/search?${p.toString()}`);
     }
   };

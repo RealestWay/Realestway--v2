@@ -92,7 +92,7 @@ export const PRICE_RANGES = [
 ];
 
 export function formatPrice(price: number): string {
-  if (price === undefined || price === null || isNaN(price)) return '₦0';
+  if (price === undefined || price === null || isNaN(price)) return 'Price N/A';
   if (price >= 1000000000) return `₦${(price / 1000000000).toFixed(1)}B`;
   if (price >= 1000000) return `₦${(price / 1000000).toFixed(1)}M`;
   if (price >= 1000) return `₦${(price / 1000).toFixed(0)}k`;

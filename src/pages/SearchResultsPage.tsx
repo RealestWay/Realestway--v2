@@ -19,6 +19,7 @@ import PropertySkeleton from '../components/property/PropertySkeleton';
 import MobileNav from '../components/layout/MobileNav';
 import { useInfiniteProperties } from '../hooks/useInfiniteProperties';
 import { SearchFilters } from '../components/search/SearchFilters';
+import { PRICE_RANGES, PROPERTY_TYPES } from '../data/mockData';
 
 export default function SearchResultsPage() {
     const [hasMounted, setHasMounted] = useState(false);
@@ -63,16 +64,52 @@ export default function SearchResultsPage() {
         const params = new URLSearchParams();
         if (appliedSearchQuery) params.set('search', appliedSearchQuery);
         if (appliedLocationQuery) params.set('city', appliedLocationQuery);
-        params.set('category', subCategory === 'shortlet' ? 'shortlet' : category);
+        
+        // Use valid category ('rent' or 'sale')
+        // Shortlets are usually 'rent' with shorter duration
+        const finalCategory = subCategory === 'shortlet' ? 'rent' : category;
+        params.set('category', finalCategory);
+        
+        if (subCategory === 'shortlet') {
+            // If the backend doesn't have a shortlet category, we can add it as a search term or specific filter
+            // Based on common patterns, it might be house_type or a search query
+            params.append('search', 'shortlet'); 
+        }
         
         // Collect all types into a set to avoid duplicates
         const allTypes = new Set(selectedTypes);
-        if (subCategory === 'land') allTypes.add('Land');
+        
+        if (category === 'sale') {
+            if (subCategory === 'land') {
+                allTypes.add('Land');
+            } else if (subCategory === '') {
+                // 'Developed' selected: if no types are manually selected, 
+                // we should ideally exclude 'Land'. 
+                // Since most backends don't have a 'NOT' filter, 
+                // we'll send all types EXCEPT 'Land' if nothing is selected.
+                if (allTypes.size === 0) {
+                    PROPERTY_TYPES.filter(t => t !== 'Land').forEach(t => allTypes.add(t));
+                } else {
+                    // If user manually selected types, we just ensure Land isn't one of them 
+                    // (unless they specifically picked it in the dropdown)
+                    // but usually subCategory 'Developed' should override it.
+                    allTypes.delete('Land');
+                }
+            }
+        }
         
         if (allTypes.size > 0) {
             allTypes.forEach(t => params.append('house_type[]', t));
         }
-        if (priceRange) params.set('price_range', priceRange);
+        // Handle Price Range Mapping
+        if (priceRange) {
+            const range = PRICE_RANGES.find(r => r.label === priceRange);
+            if (range) {
+                if (range.min !== undefined && range.min !== 0) params.set('min_price', range.min.toString());
+                if (range.max !== undefined && range.max !== Infinity) params.set('max_price', range.max.toString());
+            }
+        }
+        
         params.set('sort', sortBy);
         return params.toString();
     }, [appliedSearchQuery, appliedLocationQuery, category, subCategory, selectedTypes, priceRange, sortBy]);

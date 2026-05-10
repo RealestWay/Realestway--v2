@@ -324,24 +324,23 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: compact ? 1 : 1.5 }}>
             <LocationOnOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary', flexShrink: 0 }} />
             <Typography variant="caption" color="text.secondary" noWrap>
-              {property.city}, {property.state}
+              {property.city || 'N/A'}, {property.state || 'N/A'}
             </Typography>
           </Box>
 
-          {(bedrooms !== null || property.bedrooms !== undefined || bathrooms !== null || parking !== null) && (
             <Box sx={{ display: 'flex', gap: compact ? 1.5 : 2, mb: compact ? 1.25 : 2 }}>
-              {(bedrooms !== null || property.bedrooms !== undefined) && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <BedIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                  <Typography variant="caption" color="text.secondary" fontWeight={500}>{String(bedrooms || property.bedrooms)}</Typography>
-                </Box>
-              )}
-              {bathrooms !== null && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <BathtubOutlinedIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                  <Typography variant="caption" color="text.secondary" fontWeight={500}>{String(bathrooms)}</Typography>
-                </Box>
-              )}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <BedIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                  {bedrooms !== null ? String(bedrooms) : (property.bedrooms !== undefined ? String(property.bedrooms) : 'N/A')}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <BathtubOutlinedIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                  {bathrooms !== null ? String(bathrooms) : 'N/A'}
+                </Typography>
+              </Box>
               {parking !== null && Number(parking) > 0 && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                   <DirectionsCarOutlinedIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
@@ -355,7 +354,6 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
                 </Box>
               )}
             </Box>
-          )}
 
           <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', mt: 'auto' }}>
             <Box>
@@ -372,7 +370,7 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
                 }}
               >
                 {formatPrice(displayPrice)}
-                {property.property_category !== 'sale' && property.rental_duration && (
+                {property.property_category !== 'sale' && property.rental_duration && property.rental_duration.trim() !== '' && (
                   <Typography component="span" sx={{ fontSize: '0.65em', fontWeight: 600, color: 'text.secondary', ml: 0.5 }}>
                     / {property.rental_duration.replace('per ', '')}
                   </Typography>

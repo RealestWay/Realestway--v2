@@ -618,7 +618,7 @@ export default function AgentDashboard() {
                                     <Typography variant="body2" fontWeight={600} sx={{ display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                                       {property.title}
                                     </Typography>
-                                    <Typography variant="caption" color="text.secondary">{property.city}, {property.state}</Typography>
+                                    <Typography variant="caption" color="text.secondary">{property.city || 'N/A'}, {property.state || 'N/A'}</Typography>
                                   </Box>
                                 </Box>
                               </TableCell>

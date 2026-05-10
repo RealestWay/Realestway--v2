@@ -92,7 +92,7 @@ export default function AddListingPage() {
   const PRIORITY_FEE_NAMES = ['Agency Fee', 'Caution Fee', 'Legal Fee'];
 
   // Payload State
-  const [category, setCategory] = useState<'sale' | 'rent'>('rent');
+  const [category, setCategory] = useState<'sale' | 'rent' | 'shortlet'>('rent');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [propType, setPropType] = useState('');
@@ -256,6 +256,17 @@ export default function AddListingPage() {
     
     setTotalPackage(String(p + af + cf + lf + inf + ofs));
   }, [price, agencyFee, cautionFee, legalFee, inspectionFee, otherFees]);
+
+  // Default duration based on category
+  useEffect(() => {
+    if (category === 'shortlet') {
+      setRentalDuration('per night');
+    } else if (category === 'rent') {
+      setRentalDuration('per year'); 
+    } else {
+      setRentalDuration('');
+    }
+  }, [category]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement> | File[]) => {
     let files: File[] = [];
@@ -698,7 +709,7 @@ export default function AddListingPage() {
                 <Grid size={{ xs: 12 }}>
                   <Typography variant="subtitle2" fontWeight={700} mb={1.5}>Property Category</Typography>
                   <Box sx={{ display: 'flex', gap: 2 }}>
-                    {(['rent', 'sale'] as const).map((c) => (
+                    {(['rent', 'sale', 'shortlet'] as const).map((c) => (
                       <Paper
                         key={c}
                         onClick={() => setCategory(c)}
@@ -716,7 +727,7 @@ export default function AddListingPage() {
                         }}
                       >
                         <Typography fontWeight={700} color={category === c ? 'primary.main' : 'text.secondary'}>
-                          {c === 'rent' ? 'For Rent' : 'For Sale'}
+                          {c === 'rent' ? 'For Rent' : c === 'sale' ? 'For Sale' : 'Shortlet'}
                         </Typography>
                       </Paper>
                     ))}
@@ -1016,10 +1027,11 @@ export default function AddListingPage() {
                         label="Rental Duration"
                         size="small"
                       >
-                        <MenuItem value="per year">Per Year (Standard)</MenuItem>
+                        <MenuItem value="">Not Specified</MenuItem>
+                        <MenuItem value="per year">Per Year</MenuItem>
                         <MenuItem value="per month">Per Month</MenuItem>
-                        <MenuItem value="per week">Per Week (Shortlet)</MenuItem>
-                        <MenuItem value="per night">Per Night (Shortlet)</MenuItem>
+                        <MenuItem value="per week">Per Week</MenuItem>
+                        <MenuItem value="per night">Per Night</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>

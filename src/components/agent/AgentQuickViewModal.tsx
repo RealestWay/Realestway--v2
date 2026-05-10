@@ -78,7 +78,7 @@ export default function AgentQuickViewModal({ open, onClose, agent }: AgentQuick
           <Box sx={{ mt: 2, mb: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 0.5 }}>
               <Typography variant="h6" fontWeight={800}>
-                {businessName}
+                {businessName || 'N/A'}
               </Typography>
               {agent.claimed_at && (agent.verified_at || agent.verified) && (
                 <VerifiedIcon color="primary" sx={{ fontSize: 20 }} />
@@ -108,7 +108,7 @@ export default function AgentQuickViewModal({ open, onClose, agent }: AgentQuick
               <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
                 <LocationOnIcon sx={{ color: 'text.secondary', fontSize: 20, mt: 0.3 }} />
                 <Typography variant="body2" color="text.secondary">
-                  {address}
+                  {address || 'N/A'}
                 </Typography>
               </Box>
             )}
@@ -128,7 +128,7 @@ export default function AgentQuickViewModal({ open, onClose, agent }: AgentQuick
                   About Agency
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'pre-line', lineHeight: 1.6 }}>
-                  {description}
+                  {description || 'N/A'}
                 </Typography>
               </Box>
             )}
