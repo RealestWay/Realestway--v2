@@ -20,7 +20,7 @@ export async function generateMetadata(
     const businessName = profile.business_name || profile.name;
     const description = `Find houses, apartments, and lands listed by ${businessName} on Realestway. ${profile.bio || ''}`.substring(0, 160);
     const title = `${businessName} | Realestway Real Estate Agency`;
-    const image = profile.avatar || 'https://realestway.com/agent-default.jpg';
+    const image = profile.avatar || '/favicon.jpg';
 
     return {
       title,

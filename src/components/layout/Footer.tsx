@@ -41,7 +41,7 @@ const footerLinks: Record<string, FooterSection[]> = {
   'Contact': [
     { label: 'support@realestway.com', href: 'mailto:support@realestway.com' },
     { label: '+2348120606547',         href: 'tel:+2348120606547' },
-    { label: '+2348102349094',         href: 'tel:+2348102349094' },
+    { label: '+2348164312224',         href: 'tel:+2348164312224' },
   ],
 };
 

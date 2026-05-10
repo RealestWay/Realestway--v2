@@ -133,8 +133,8 @@ interface HeroSectionProps {
   filterTop: boolean;
   isStickyFilterExpanded: boolean;
   setIsStickyFilterExpanded: (v: boolean) => void;
-  heroRef: React.RefObject<HTMLDivElement>;
-  filterRef: React.RefObject<HTMLDivElement>;
+  heroRef: React.RefObject<HTMLDivElement | null>;
+  filterRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function HeroSection({

@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
@@ -45,6 +47,41 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
   const [likesCount, setLikesCount] = useState(property.likes_count || 0);
   const [imgIdx, setImgIdx] = useState(0);
   const [agentModalOpen, setAgentModalOpen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+
+  /* Intersection Observer to handle autoplay only when visible */
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (videoRef.current) {
+            if (entry.isIntersecting) {
+              videoRef.current.play().catch(() => {});
+            } else {
+              videoRef.current.pause();
+            }
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const handlePrefetch = () => {
+    const id = property.uuid || property.id;
+    queryClient.prefetchQuery({
+      queryKey: ['property', id],
+      queryFn: async () => {
+        const res: any = await ApiService.properties.getOne(id);
+        return res?.data;
+      }
+    });
+  };
 
 
   const agent = property.agent_profile || property.agent;
@@ -121,6 +158,8 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
 
   return (
     <Card
+      ref={cardRef}
+      onMouseEnter={handlePrefetch}
       sx={{
         height: '100%',
         display: 'flex',
@@ -142,28 +181,42 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
           <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'black', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
              <Box
               component="video"
+              ref={videoRef}
               src={images[imgIdx]}
               sx={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }}
               muted
-              autoPlay
               loop
+              preload="metadata"
+              playsInline
             />
             <PlayCircleOutlineIcon sx={{ position: 'absolute', fontSize: 40, color: 'white', opacity: 0.8 }} />
           </Box>
         ) : (
-          <Image
-            src={images.length > 0 ? images[imgIdx] : '/placeholder.jpg'}
-            alt={property.title}
-            fill
-            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            style={{
-              objectFit: 'cover',
-              transition: 'transform 0.4s ease',
-            }}
-            onLoad={(e) => {
-              // Custom logic if needed
-            }}
-          />
+          <>
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+                backgroundSize: '200% 100%',
+                animation: 'shimmer 1.5s infinite',
+                '@keyframes shimmer': {
+                  '0%': { backgroundPosition: '200% 0' },
+                  '100%': { backgroundPosition: '-200% 0' },
+                },
+              }}
+            />
+            <Image
+              src={images.length > 0 ? images[imgIdx] : '/placeholder.jpg'}
+              alt={property.title}
+              fill
+              sizes="(max-width: 600px) 98vw, (max-width: 1200px) 48vw, 30vw"
+              style={{
+                objectFit: 'cover',
+                transition: 'transform 0.4s ease',
+              }}
+            />
+          </>
         )}
         <Box sx={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 1 }}>
           <Chip

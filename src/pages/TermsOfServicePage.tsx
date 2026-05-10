@@ -555,7 +555,7 @@ export default function TermsOfServicePage() {
                     support@realestway.com
                   </Box>
                 </Typography>
-                <Typography variant="body2" sx={{ mb: 0.5 }}>📞 +234 812 060 6547 / +234 810 234 9094</Typography>
+                <Typography variant="body2" sx={{ mb: 0.5 }}>📞 +234 812 060 6547 / +234 816 431 2224</Typography>
                 <Typography variant="body2" sx={{ mt: 1.5, color: 'text.secondary', fontSize: '0.8rem' }}>
                   Response time: within 30 business days.
                 </Typography>

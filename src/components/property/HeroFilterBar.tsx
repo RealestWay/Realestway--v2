@@ -35,7 +35,9 @@ export default function HeroFilterBar({ compact = false, initialValues = {}, onS
   const [priceRange, setPriceRange] = useState(initialValues.priceRange || '');
 
   const handleSearch = () => {
-    const category = tab === 'Buy' ? 'sale' : 'rent';
+    const isLand = Array.isArray(propType) ? propType.includes('Land') : propType === 'Land';
+    const category = isLand ? 'sale' : (tab === 'Buy' ? 'sale' : 'rent');
+
     if (onSearch) {
       onSearch({ location, type: propType, priceRange, category });
     } else {
@@ -47,7 +49,7 @@ export default function HeroFilterBar({ compact = false, initialValues = {}, onS
         if (Array.isArray(propType)) {
           propType.forEach(t => p.append('house_type[]', t));
         } else {
-          p.set('house_type', propType);
+          p.append('house_type[]', propType);
         }
       }
       

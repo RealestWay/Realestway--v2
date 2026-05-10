@@ -45,7 +45,7 @@ const RequestsPage: React.FC = () => {
     const { data, isLoading, isError } = usePropertyRequests({
         ...appliedFilters,
         page
-    });
+    }, { enabled: hasMounted });
 
     const requests = data?.data || [];
     const totalPages = data?.last_page || 1;

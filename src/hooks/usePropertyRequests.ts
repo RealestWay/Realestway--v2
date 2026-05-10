@@ -1,7 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import ApiService from '../services/api';
 
-export function usePropertyRequests(filters: { category?: string; house_type?: string; city?: string; state?: string; page?: number }) {
+export function usePropertyRequests(
+  filters: { category?: string; house_type?: string; city?: string; state?: string; page?: number },
+  options: { enabled?: boolean } = {}
+) {
   const queryParams = new URLSearchParams();
   if (filters.category && filters.category !== 'all') queryParams.append('category', filters.category);
   if (filters.house_type) queryParams.append('house_type', filters.house_type);
@@ -17,5 +20,6 @@ export function usePropertyRequests(filters: { category?: string; house_type?: s
       const response: any = await ApiService.requests.getAll(queryParams.toString());
       return response;
     },
+    enabled: options.enabled !== false,
   });
 }

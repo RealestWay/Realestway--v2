@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       const p = res.data;
       const title = `${p.house_type || 'Property'} for ${p.category} in ${p.city}, ${p.state} | Realestway`;
       const description = `${p.bedrooms ? p.bedrooms + ' Bedroom ' : ''}${p.house_type} located at ${p.address}, ${p.city}. Price: ₦${(p.total_package || p.basic_rent || p.price || 0).toLocaleString()}.`;
-      const images = p.images && p.images.length > 0 ? [ApiService.getMediaUrl(p.images[0])] : ['https://realestway.com/og-default.jpg'];
+      const images = p.images && p.images.length > 0 ? [ApiService.getMediaUrl(p.images[0])] : ['/favicon.jpg'];
 
       return {
         title,

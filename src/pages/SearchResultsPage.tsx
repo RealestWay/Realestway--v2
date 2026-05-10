@@ -34,7 +34,10 @@ export default function SearchResultsPage() {
     const initialQuery = searchParams?.get('q') || searchParams?.get('search') || '';
     const initialCity = searchParams?.get('city') || '';
     const initialCategoryParam = searchParams?.get('category') || 'rent';
-    const initialTypes = searchParams?.getAll('house_type[]') || [];
+    const initialTypes = Array.from(new Set([
+        ...(searchParams?.getAll('house_type[]') || []),
+        ...(searchParams?.get('house_type') ? [searchParams.get('house_type')!] : [])
+    ]));
     
     // Applied Filter States
     const [appliedSearchQuery, setAppliedSearchQuery] = useState(initialQuery);
@@ -47,7 +50,10 @@ export default function SearchResultsPage() {
     const [category, setCategory] = useState<'rent' | 'sale'>(
         (initialCategoryParam === 'sale' || initialTypes.includes('Land')) ? 'sale' : 'rent'
     );
-    const [subCategory, setSubCategory] = useState(searchParams?.get('subcategory') || '');
+    const [subCategory, setSubCategory] = useState(
+        searchParams?.get('subcategory') || 
+        (initialCategoryParam === 'shortlet' ? 'shortlet' : (initialTypes.includes('Land') ? 'land' : ''))
+    );
     const [selectedTypes, setSelectedTypes] = useState<string[]>(initialTypes);
     const [priceRange, setPriceRange] = useState(searchParams?.get('price_range') || '');
     const [sortBy, setSortBy] = useState(searchParams?.get('sort') || 'newest');
@@ -58,9 +64,13 @@ export default function SearchResultsPage() {
         if (appliedSearchQuery) params.set('search', appliedSearchQuery);
         if (appliedLocationQuery) params.set('city', appliedLocationQuery);
         params.set('category', subCategory === 'shortlet' ? 'shortlet' : category);
-        if (subCategory === 'land') params.set('house_type[]', 'Land');
-        if (selectedTypes.length > 0) {
-            selectedTypes.forEach(t => params.append('house_type[]', t));
+        
+        // Collect all types into a set to avoid duplicates
+        const allTypes = new Set(selectedTypes);
+        if (subCategory === 'land') allTypes.add('Land');
+        
+        if (allTypes.size > 0) {
+            allTypes.forEach(t => params.append('house_type[]', t));
         }
         if (priceRange) params.set('price_range', priceRange);
         params.set('sort', sortBy);
@@ -74,7 +84,7 @@ export default function SearchResultsPage() {
         hasNextPage, 
         fetchNextPage,
         status 
-    } = useInfiniteProperties(searchParamsString);
+    } = useInfiniteProperties(searchParamsString, { enabled: hasMounted });
 
     const properties = useMemo(() => {
         return data?.pages.flatMap(page => page.data) || [];

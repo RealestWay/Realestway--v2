@@ -30,6 +30,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import AddIcon from '@mui/icons-material/Add';
 import { useAuth } from '../../context/AuthContext';
 import EmailVerificationBanner from './EmailVerificationBanner';
+import { useQueryClient } from '@tanstack/react-query';
+import ApiService from '@/src/services/api';
 
 const NAV_LINKS = [
   { label: 'Home', path: '/' },
@@ -85,7 +87,27 @@ export default function Navbar({ position = 'fixed' }: { position?: 'fixed' | 'a
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleMenuClose = () => setAnchorEl(null);
+  const queryClient = useQueryClient();
+
+  const handlePrefetch = (path: string) => {
+    if (path === '/search') {
+      queryClient.prefetchQuery({
+        queryKey: ['infinite_properties', 'category=rent'],
+        queryFn: async () => {
+          const res: any = await ApiService.properties.getAll('category=rent&limit=12');
+          return res;
+        }
+      });
+    } else if (path === '/requests') {
+      queryClient.prefetchQuery({
+        queryKey: ['property_requests'],
+        queryFn: async () => {
+          const res: any = await ApiService.requests.getAll();
+          return res;
+        }
+      });
+    }
+  };
 
   return (
     <>
@@ -151,7 +173,12 @@ export default function Navbar({ position = 'fixed' }: { position?: 'fixed' | 'a
           {/* Desktop nav links */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.25, ml: 5 }}>
             {NAV_LINKS.map((link) => (
-              <Link key={link.path} href={link.path} style={{ textDecoration: 'none' }}>
+              <Link 
+                key={link.path} 
+                href={link.path} 
+                style={{ textDecoration: 'none' }}
+                onMouseEnter={() => handlePrefetch(link.path)}
+              >
                 <Button
                   sx={{
                     color: isActive(link.path) ? activeLinkColor : linkColor,

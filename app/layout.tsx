@@ -16,6 +16,8 @@ import '@fontsource/poppins/500.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 
+import QueryProvider from '../src/components/providers/QueryProvider';
+
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 
 export const metadata: Metadata = {
@@ -34,12 +36,13 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    images: ['https://bolt.new/static/og_default.png'],
+    images: ['/favicon.jpg'],
   },
   twitter: {
-    card: 'summary_large_image',
-    images: ['https://bolt.new/static/og_default.png'],
+    card: 'summary',
+    images: ['/favicon.jpg'],
   },
+  metadataBase: new URL('https://realestway.com'),
 };
 
 export const viewport: Viewport = {
@@ -56,12 +59,14 @@ export default function RootLayout({
       <body>
         <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
           <AuthProvider>
-            <ThemeRegistry>
-              <TrackingProvider />
-              <PWAInstallButton />
-              <CookieConsent />
-              {children}
-            </ThemeRegistry>
+            <QueryProvider>
+              <ThemeRegistry>
+                <TrackingProvider />
+                <PWAInstallButton />
+                <CookieConsent />
+                {children}
+              </ThemeRegistry>
+            </QueryProvider>
           </AuthProvider>
         </GoogleOAuthProvider>
       </body>

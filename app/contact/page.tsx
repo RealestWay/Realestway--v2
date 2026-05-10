@@ -233,8 +233,8 @@ export default function ContactPage() {
               <ContactCard
                 icon={<WhatsAppIcon />}
                 label="WhatsApp"
-                value="+234 810 234 9094"
-                href="https://wa.me/2348102349094"
+                value="+234 816 431 2224"
+                href="https://wa.me/2348164312224"
                 delay={80}
               />
             </Grid>
@@ -318,7 +318,7 @@ export default function ContactPage() {
                 <Button
                   fullWidth
                   variant="contained"
-                  href="https://wa.me/2348102349094"
+                  href="https://wa.me/2348164312224"
                   startIcon={<WhatsAppIcon />}
                   target="_blank"
                   rel="noopener noreferrer"

@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import ApiService from '../services/api';
 
-export function useInfiniteProperties(searchParamsString: string) {
+export function useInfiniteProperties(searchParamsString: string, options: { enabled?: boolean } = {}) {
   return useInfiniteQuery({
     queryKey: ['properties', searchParamsString],
     queryFn: async ({ pageParam = 1 }) => {
@@ -14,5 +14,6 @@ export function useInfiniteProperties(searchParamsString: string) {
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
+    enabled: options.enabled !== false,
   });
 }

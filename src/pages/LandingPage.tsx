@@ -8,14 +8,28 @@ import { useUserLocation } from '../hooks/useUserLocation';
 import { useAuth } from '../context/AuthContext';
 import MobileNav from '../components/layout/MobileNav';
 
-/* ── Section components ── */
+import dynamic from 'next/dynamic';
+import Skeleton from '@mui/material/Skeleton';
 import HeroSection from '../components/home/HeroSection';
 import CategoryCardsSection from '../components/home/CategoryCardsSection';
-import CitiesCarousel from '../components/home/CitiesCarousel';
-import DynamicPropertySections from '../components/home/DynamicPropertySections';
-import PopularCitiesGrid from '../components/home/PopularCitiesGrid';
-import BlogSection from '../components/home/BlogSection';
-import HowItWorksSection from '../components/home/HowItWorksSection';
+import { useHomeData, useCities } from '../hooks/useHomeData';
+
+/* ── Dynamic sections (below the fold) ── */
+const CitiesCarousel = dynamic(() => import('../components/home/CitiesCarousel'), {
+  loading: () => <Skeleton variant="rectangular" height={200} sx={{ my: 4, borderRadius: 2 }} />
+});
+const DynamicPropertySections = dynamic(() => import('../components/home/DynamicPropertySections'), {
+  loading: () => <Skeleton variant="rectangular" height={600} sx={{ my: 4, borderRadius: 2 }} />
+});
+const PopularCitiesGrid = dynamic(() => import('../components/home/PopularCitiesGrid'), {
+  loading: () => <Skeleton variant="rectangular" height={400} sx={{ my: 4, borderRadius: 2 }} />
+});
+const BlogSection = dynamic(() => import('../components/home/BlogSection'), {
+  loading: () => <Skeleton variant="rectangular" height={300} sx={{ my: 4, borderRadius: 2 }} />
+});
+const HowItWorksSection = dynamic(() => import('../components/home/HowItWorksSection'), {
+  loading: () => <Skeleton variant="rectangular" height={300} sx={{ my: 4, borderRadius: 2 }} />
+});
 
 /* ══════════════════════════════════════════
    MAIN LANDING PAGE
@@ -33,7 +47,10 @@ export default function LandingPage() {
   const filterRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
-  /* ── Home data state ── */
+  /* ── Home data via TanStack Query ── */
+  const { data: homeQueryData, isLoading: homeLoading } = useHomeData();
+  const { data: popularCities = [] } = useCities();
+
   const [homeData, setHomeData] = useState<any>({
     sections: {
       recent: [], featured: [], hot_deals: [],
@@ -42,10 +59,23 @@ export default function LandingPage() {
     counts: { rent: 0, sale: 0, shortlet: 0, land: 0 },
     avg_prices: { rent: 0, sale: 0, shortlet: 0, land: 0 },
   });
-  const [popularCities, setPopularCities] = useState<{ name: string; count: number; emoji: string }[]>([]);
   const [visibleCitiesCount, setVisibleCitiesCount] = useState(12);
   const [shuffledSections, setShuffledSections] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Sync query data to local state for internal filtering/shuffling
+  useEffect(() => {
+    if (homeQueryData) {
+      setHomeData(homeQueryData);
+      setLoading(false);
+      if (shuffledSections.length === 0) {
+        const allSections = ['recent', 'featured', 'popular', 'recommended', 'luxury', 'affordable'];
+        setShuffledSections([...allSections].sort(() => 0.5 - Math.random()));
+      }
+    } else if (!homeLoading) {
+      setLoading(false);
+    }
+  }, [homeQueryData, homeLoading, shuffledSections.length]);
 
   /* ── Filter / search state ── */
   const [globalCategory, setGlobalCategory] = useState<'rent' | 'sale'>('rent');
@@ -76,62 +106,7 @@ export default function LandingPage() {
     });
   }, [globalCategory, quickFilters]);
 
-  /* ── Load cached home data immediately ── */
-  useEffect(() => {
-    try {
-      const cachedData = localStorage.getItem('home_properties');
-      if (cachedData) {
-        const parsed = JSON.parse(cachedData);
-        setHomeData(parsed);
-        setLoading(false);
-        const allSections = ['recent', 'featured', 'popular', 'recommended', 'luxury', 'affordable'];
-        setShuffledSections([...allSections].sort(() => 0.5 - Math.random()));
-      }
-    } catch (e) {
-      console.error('Failed to load home cache', e);
-    }
-  }, []);
-
-  /* ── Fetch home data + cities ── */
-  useEffect(() => {
-    const fetchHomeData = async () => {
-      try {
-        const response: any = await ApiService.properties.getHome();
-        if (response) {
-          setHomeData(response);
-          localStorage.setItem('home_properties', JSON.stringify(response));
-          const allSections = ['recent', 'featured', 'popular', 'recommended', 'luxury', 'affordable'];
-          setShuffledSections([...allSections].sort(() => 0.5 - Math.random()));
-        }
-      } catch (err) {
-        console.error('Failed to fetch home properties:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchCities = async () => {
-      try {
-        const cachedCities = localStorage.getItem('available_cities');
-        if (cachedCities) setPopularCities(JSON.parse(cachedCities));
-        const response: any = await ApiService.properties.getCities();
-        if (response && response.data) {
-          const mapped = response.data.map((c: any, i: number) => ({
-            name: c.name,
-            count: c.count,
-            emoji: ['🏙️', '🏛️', '⚓', '🏘️', '🌆', '🌿'][i % 6],
-          }));
-          setPopularCities(mapped);
-          localStorage.setItem('available_cities', JSON.stringify(mapped));
-        }
-      } catch (err) {
-        console.error('Failed to fetch cities:', err);
-      }
-    };
-
-    fetchHomeData();
-    fetchCities();
-  }, []);
+  /* ── Data fetching is now handled by hooks ── */
 
   /* ── Fetch nearby when location resolves ── */
   useEffect(() => {
@@ -179,7 +154,7 @@ export default function LandingPage() {
           }
         });
         if (houseTypes.length > 0) houseTypes.forEach((t) => query.append('house_type[]', t));
-        if (minBeds !== null) query.append('bedrooms', minBeds.toString());
+        if (minBeds !== null) query.append('bedrooms', String(minBeds));
         query.append('limit', '12');
         const res: any = await ApiService.properties.getAll(query.toString());
         if (res && res.data) {

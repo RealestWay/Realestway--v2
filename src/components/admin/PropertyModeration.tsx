@@ -23,10 +23,15 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import CloseIcon from '@mui/icons-material/Close';
 import ApiService from '../../services/api';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { getCache, setCache } from '../../utils/cache';
+import { Divider } from '@mui/material';
 
 export default function PropertyModeration() {
   const router = useRouter();
@@ -37,9 +42,12 @@ export default function PropertyModeration() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [total, setTotal] = useState(0);
   const [statusFilter, setStatusFilter] = useState('');
+  const [sourceFilter, setSourceFilter] = useState('');
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewMedia, setPreviewMedia] = useState<string | null>(null);
 
   const fetchProperties = async () => {
-    const cacheKey = `properties_${page}_${rowsPerPage}_${search}_${statusFilter}`;
+    const cacheKey = `properties_${page}_${rowsPerPage}_${search}_${statusFilter}_${sourceFilter}`;
     const cached = getCache(cacheKey);
 
     if (cached) {
@@ -56,6 +64,7 @@ export default function PropertyModeration() {
         limit: rowsPerPage.toString(),
         search,
         ...(statusFilter && { status: statusFilter }),
+        ...(sourceFilter && { source: sourceFilter }),
       });
       const res: any = await ApiService.admin.getProperties(params.toString());
       setProperties(res.data);
@@ -73,7 +82,7 @@ export default function PropertyModeration() {
       fetchProperties();
     }, 500);
     return () => clearTimeout(timer);
-  }, [page, rowsPerPage, search, statusFilter]);
+  }, [page, rowsPerPage, search, statusFilter, sourceFilter]);
 
   const handleVerify = async (id: string | number) => {
     try {
@@ -96,6 +105,8 @@ export default function PropertyModeration() {
     }
   };
 
+  const isVideo = (url: string) => url?.toLowerCase().match(/\.(mp4|webm|ogg)$/) || (url?.includes('uploads') && url?.split('.').pop()?.match(/(mp4|webm|ogg)$/i));
+
   return (
     <Box>
       <Paper elevation={0} sx={{ p: 0, borderRadius: 4, border: '1px solid rgba(0,0,0,0.05)', overflow: 'hidden' }}>
@@ -116,6 +127,50 @@ export default function PropertyModeration() {
               }}
             />
           </Box>
+
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            <Chip 
+              label="All" 
+              onClick={() => { setStatusFilter(''); setSourceFilter(''); }}
+              color={!statusFilter && !sourceFilter ? "primary" : "default"}
+              variant={!statusFilter && !sourceFilter ? "filled" : "outlined"}
+              size="small"
+              sx={{ fontWeight: 600 }}
+            />
+            <Chip 
+              label="Active" 
+              onClick={() => { setStatusFilter('active'); setSourceFilter(''); }}
+              color={statusFilter === 'active' ? "success" : "default"}
+              variant={statusFilter === 'active' ? "filled" : "outlined"}
+              size="small"
+              sx={{ fontWeight: 600 }}
+            />
+            <Chip 
+              label="Inactive" 
+              onClick={() => { setStatusFilter('inactive'); setSourceFilter(''); }}
+              color={statusFilter === 'inactive' ? "error" : "default"}
+              variant={statusFilter === 'inactive' ? "filled" : "outlined"}
+              size="small"
+              sx={{ fontWeight: 600 }}
+            />
+            <Divider orientation="vertical" flexItem sx={{ mx: 0.5, height: 20, alignSelf: 'center' }} />
+            <Chip 
+              label="WhatsApp" 
+              onClick={() => { setSourceFilter('whatsapp'); setStatusFilter(''); }}
+              color={sourceFilter === 'whatsapp' ? "primary" : "default"}
+              variant={sourceFilter === 'whatsapp' ? "filled" : "outlined"}
+              size="small"
+              sx={{ fontWeight: 600 }}
+            />
+            <Chip 
+              label="Platform" 
+              onClick={() => { setSourceFilter('platform'); setStatusFilter(''); }}
+              color={sourceFilter === 'platform' ? "primary" : "default"}
+              variant={sourceFilter === 'platform' ? "filled" : "outlined"}
+              size="small"
+              sx={{ fontWeight: 600 }}
+            />
+          </Box>
         </Box>
 
         <TableContainer sx={{ minHeight: 400 }}>
@@ -125,6 +180,7 @@ export default function PropertyModeration() {
                 <TableCell sx={{ fontWeight: 700, bgcolor: '#f8fafc' }}>Property</TableCell>
                 <TableCell sx={{ fontWeight: 700, bgcolor: '#f8fafc' }}>Agent</TableCell>
                 <TableCell sx={{ fontWeight: 700, bgcolor: '#f8fafc' }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 700, bgcolor: '#f8fafc' }}>Source</TableCell>
                 <TableCell sx={{ fontWeight: 700, bgcolor: '#f8fafc' }}>Verification</TableCell>
                 <TableCell sx={{ fontWeight: 700, bgcolor: '#f8fafc' }} align="right">Actions</TableCell>
               </TableRow>
@@ -132,13 +188,13 @@ export default function PropertyModeration() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ py: 10 }}>
+                  <TableCell colSpan={6} align="center" sx={{ py: 10 }}>
                     <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
               ) : properties.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ py: 10 }}>
+                  <TableCell colSpan={6} align="center" sx={{ py: 10 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                       <Box sx={{ p: 3, borderRadius: '50%', bgcolor: '#f0fdf4' }}>
                         <HomeWorkOutlinedIcon sx={{ fontSize: 48, color: '#059669' }} />
@@ -155,11 +211,40 @@ export default function PropertyModeration() {
                   <TableRow key={property.id} hover sx={{ '&:last-child td': { border: 0 }, transition: 'background-color 0.2s' }}>
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Box
-                          component="img"
-                          src={ApiService.getMediaUrl(property.media_urls?.[0] || '/Asset_8.png')}
-                          sx={{ width: 60, height: 48, objectFit: 'cover', borderRadius: 2, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0' }}
-                        />
+                        {(() => {
+                          const firstMediaUrl = property.media?.[0]?.file_url || property.media_urls?.[0] || property.images?.[0];
+                          const mediaUrl = ApiService.getMediaUrl(firstMediaUrl || '/Asset_8.png');
+                          const isVid = firstMediaUrl ? isVideo(firstMediaUrl) : false;
+
+                          return (
+                            <Box 
+                              sx={{ position: 'relative', width: 60, height: 48, cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+                              onClick={() => {
+                                setPreviewMedia(firstMediaUrl);
+                                setPreviewOpen(true);
+                              }}
+                            >
+                              {isVid ? (
+                                <Box
+                                  component="video"
+                                  src={mediaUrl}
+                                  sx={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 2, bgcolor: 'black', border: '1px solid #e2e8f0' }}
+                                />
+                              ) : (
+                                <Box
+                                  component="img"
+                                  src={mediaUrl}
+                                  sx={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 2, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0' }}
+                                />
+                              )}
+                              {isVid && (
+                                <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(0,0,0,0.2)', borderRadius: 2 }}>
+                                  <PlayCircleOutlineIcon sx={{ color: 'white', fontSize: 24 }} />
+                                </Box>
+                              )}
+                            </Box>
+                          );
+                        })()}
                         <Box>
                           <Typography variant="body2" fontWeight={700} sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {property.title}
@@ -181,6 +266,19 @@ export default function PropertyModeration() {
                           textTransform: 'capitalize',
                           bgcolor: property.status === 'active' ? '#f0fdf4' : '#fef2f2',
                           color: property.status === 'active' ? '#166534' : '#991b1b',
+                        }} 
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={property.source || 'platform'} 
+                        size="small" 
+                        variant="outlined"
+                        sx={{ 
+                          fontWeight: 700, 
+                          textTransform: 'capitalize',
+                          fontSize: '0.65rem',
+                          height: 20
                         }} 
                       />
                     </TableCell>
@@ -230,6 +328,42 @@ export default function PropertyModeration() {
           sx={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}
         />
       </Paper>
+
+      {/* Media Preview Modal */}
+      <Dialog 
+        open={previewOpen} 
+        onClose={() => setPreviewOpen(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: { borderRadius: 4, overflow: 'hidden', bgcolor: 'black' }
+        }}
+      >
+        <DialogContent sx={{ p: 0, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
+          <IconButton
+            onClick={() => setPreviewOpen(false)}
+            sx={{ position: 'absolute', top: 12, right: 12, bgcolor: 'rgba(255,255,255,0.2)', color: 'white', zHeaders: 10, '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}
+          >
+            <CloseIcon />
+          </IconButton>
+          
+          {previewMedia && isVideo(previewMedia) ? (
+            <Box
+              component="video"
+              src={ApiService.getMediaUrl(previewMedia)}
+              controls
+              autoPlay
+              sx={{ width: '100%', maxHeight: '80vh' }}
+            />
+          ) : (
+            <Box
+              component="img"
+              src={ApiService.getMediaUrl(previewMedia || '/Asset_8.png')}
+              sx={{ width: '100%', maxHeight: '80vh', objectFit: 'contain' }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }
