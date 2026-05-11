@@ -16,6 +16,8 @@ interface User {
   kyc_status: string;
   agent_profile_id?: number | null;
   agent_profile?: any;
+  profile_picture?: string | null;
+  created_at?: string;
 }
 
 interface AuthContextType {

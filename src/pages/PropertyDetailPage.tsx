@@ -58,8 +58,17 @@ import { Property, User } from '../types';
 
 export default function PropertyDetailPage({ initialData }: { initialData?: Property }) {
   const params = useParams();
-  const id = params?.id as string;
   const router = useRouter();
+  
+  // Resolve ID/Slug from params (handling both legacy /property/[id] and new /properties/[...slug])
+  const propertyIdentifier = useMemo(() => {
+    if (params?.id) return params.id as string;
+    if (params?.slug && Array.isArray(params.slug)) {
+      return params.slug[params.slug.length - 1];
+    }
+    return null;
+  }, [params]);
+
   const [property, setProperty] = useState<Property | null>(initialData || null);
   const [loading, setLoading] = useState(!initialData);
   const [saved, setSaved] = useState(false);
@@ -92,7 +101,9 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
 
   useEffect(() => {
     const fetchProperty = async () => {
-      if (!id) return;
+      if (!propertyIdentifier) return;
+      
+      const isSlug = !/^\d+$/.test(propertyIdentifier);
       
       // Only show main spinner if we have absolutely nothing in session storage
       const stored = sessionStorage.getItem('selectedProperty');
@@ -100,7 +111,8 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          if (String(parsed.uuid || parsed.id) === String(id)) {
+          const parsedId = String(parsed.slug || parsed.uuid || parsed.id);
+          if (parsedId === String(propertyIdentifier)) {
             setProperty(parsed);
             setLoading(false);
             hasInitial = true;
@@ -111,8 +123,11 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
       if (!hasInitial && !initialData) setLoading(true);
       
       try {
-        const response: any = await ApiService.properties.getOne(id);
-        if (response) {
+        const response: any = isSlug 
+          ? await ApiService.properties.getBySlug(propertyIdentifier)
+          : await ApiService.properties.getOne(propertyIdentifier);
+          
+        if (response && response.success) {
           setProperty(response?.data);
           // Update cache for next time
           sessionStorage.setItem('selectedProperty', JSON.stringify(response?.data));
@@ -122,16 +137,19 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
           setLikesCount(response?.data?.likes_count || 0);
         }
       } catch (err) {
-        console.error('Failed to fetch property detail, using mock data:', err);
-        const mock = mockProperties.find((p) => p.id === id);
-        if (mock) setProperty(mock);
+        console.error('Failed to fetch property detail:', err);
+        // Fallback to mock data if it's a numeric ID
+        if (!isSlug) {
+          const mock = mockProperties.find((p) => p.id === propertyIdentifier);
+          if (mock) setProperty(mock);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchProperty();
-  }, [id]);
+  }, [propertyIdentifier, initialData]);
 
   const handleShare = async () => {
     if (!property) return;
@@ -261,7 +279,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
     }
   };
 
-  const similar = mockProperties.filter((p) => p.id !== id && p.city === property.city).slice(0, 3);
+  const similar = mockProperties.filter((p) => p.id !== propertyIdentifier && p.city === property.city).slice(0, 3);
 
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
