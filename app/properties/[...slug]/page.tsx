@@ -21,11 +21,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const isNumericId = /^\d+$/.test(slug);
 
   try {
-    const res = isNumericId
-      ? await ApiService.properties.getOne(slug) as { success: boolean, data: Property }
-      : await ApiService.properties.getBySlug(slug) as { success: boolean, data: Property };
+      const res = isNumericId
+      ? await ApiService.properties.getOne(slug) as { data: Property }
+      : await ApiService.properties.getBySlug(slug) as { data: Property };
 
-    if (res && res.success && res.data) {
+    if (res && res.data) {
       const p = res.data;
       const title = `${p.bedrooms ? p.bedrooms + ' Bedroom ' : ''}${p.house_type || 'Property'} for ${p.category} in ${p.city}, ${p.state} | Realestway`;
       const description = `Explore this ${p.bedrooms ? p.bedrooms + ' Bedroom ' : ''}${p.house_type} located at ${p.address}, ${p.city}. Price: ₦${(p.total_package || p.basic_rent || p.price || 0).toLocaleString()}. Sourced daily from property-sharing communities.`;
@@ -71,10 +71,10 @@ export default async function PropertySlugPage({ params }: PageProps) {
 
   try {
     const res = isNumericId
-      ? await ApiService.properties.getOne(slug) as { success: boolean, data: Property }
-      : await ApiService.properties.getBySlug(slug) as { success: boolean, data: Property };
+      ? await ApiService.properties.getOne(slug) as { data: Property }
+      : await ApiService.properties.getBySlug(slug) as { data: Property };
       
-    if (res && res.success) {
+    if (res && res.data) {
       initialData = res.data;
       
       // Redirect to canonical URL if accessed via numeric ID or incomplete slug

@@ -127,7 +127,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
           ? await ApiService.properties.getBySlug(propertyIdentifier)
           : await ApiService.properties.getOne(propertyIdentifier);
           
-        if (response && response.success) {
+        if (response && response.data) {
           setProperty(response?.data);
           // Update cache for next time
           sessionStorage.setItem('selectedProperty', JSON.stringify(response?.data));
