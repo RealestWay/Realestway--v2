@@ -33,6 +33,7 @@ import { formatPrice, getFeatureValue } from '../../data/mockData';
 import AgentQuickViewModal from '../agent/AgentQuickViewModal';
 import ApiService from '@/src/services/api';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import { getPropertyUrl } from '../../utils/urls';
 
 interface PropertyCardProps {
   property: Property;
@@ -42,6 +43,7 @@ interface PropertyCardProps {
 
 export default function PropertyCard({ property, onSave, compact = false }: PropertyCardProps) {
   const router = useRouter();
+  const propertyUrl = getPropertyUrl(property);
   const [saved, setSaved] = useState(property.is_saved || property.saved || false);
   const [liked, setLiked] = useState(property.is_liked || false);
   const [likesCount, setLikesCount] = useState(property.likes_count || 0);
@@ -300,7 +302,7 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
       <CardActionArea
         onClick={() => {
           sessionStorage.setItem('selectedProperty', JSON.stringify(property));
-          router.push(`/property/${property.uuid || property.id}`);
+          router.push(propertyUrl);
         }}
         sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
       >
@@ -404,7 +406,7 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
         <Button
           fullWidth
           component={Link}
-          href={`/property/${property.uuid || property.id}`}
+          href={propertyUrl}
           variant="contained"
           size="small"
           sx={{ 

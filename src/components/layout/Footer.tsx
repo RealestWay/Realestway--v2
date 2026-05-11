@@ -43,6 +43,20 @@ const footerLinks: Record<string, FooterSection[]> = {
     { label: '+2348120606547',         href: 'tel:+2348120606547' },
     { label: '+2348164312224',         href: 'tel:+2348164312224' },
   ],
+  'Properties by City': [
+    { label: 'Lagos',   href: '/search?city=Lagos' },
+    { label: 'Abuja',   href: '/search?city=Abuja' },
+    { label: 'Ibadan',  href: '/search?city=Ibadan' },
+    { label: 'Port Harcourt', href: '/search?city=Port+Harcourt' },
+    { label: 'Enugu',   href: '/search?city=Enugu' },
+  ],
+  'Properties by Type': [
+    { label: 'Apartments',   href: '/search?type=Apartment' },
+    { label: 'Duplexes',     href: '/search?type=Duplex' },
+    { label: 'Self Contain', href: '/search?type=Studio' },
+    { label: 'Shortlets',    href: '/search?category=shortlet' },
+    { label: 'Land for Sale', href: '/search?type=Land' },
+  ],
 };
 
 const socialLinks = [
@@ -153,7 +167,7 @@ export default function Footer() {
 
             {/* Link columns */}
             {Object.entries(footerLinks).map(([section, links]) => (
-              <Grid  size={{ xs: 6 }}  size={{ sm: 3, md: 2 }} key={section}>
+              <Grid size={{ xs: 6, sm: 3, md: 2 }} key={section}>
                 <Typography variant="subtitle1" sx={{ color: 'white', fontWeight: 700, mb: 3 }}>
                   {section}
                 </Typography>
@@ -162,7 +176,7 @@ export default function Footer() {
                     <Link
                       key={label}
                       href={label === 'Become An Agent' ? undefined : href}
-                      onClick={label === 'Become An Agent' ? (e) => { e.preventDefault(); setAgentGuideOpen(true); } : undefined}
+                      onClick={label === 'Become An Agent' ? (e: any) => { e.preventDefault(); setAgentGuideOpen(true); } : undefined}
                       component={label === 'Become An Agent' ? 'button' : 'a'}
                       underline="none"
                       sx={{
@@ -182,7 +196,7 @@ export default function Footer() {
             ))}
 
             {/* Newsletter column */}
-            <Grid  size={{ xs: 12 }}  size={{ md: 3, lg: 2.5 }}>
+            <Grid size={{ xs: 12, md: 3, lg: 2.5 }}>
               <Typography variant="subtitle1" sx={{ color: 'white', fontWeight: 700, mb: 3 }}>
                 Subscribe to our newsletter
               </Typography>

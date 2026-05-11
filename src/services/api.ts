@@ -201,6 +201,8 @@ class ApiService {
     
     getOne: (id: string | number) => this.request(`/properties/${id}`),
     
+    getBySlug: (slug: string) => this.request(`/properties/slug/${slug}`),
+    
     create: (data: any) => this.request('/properties', {
       method: 'POST',
       body: JSON.stringify(data),

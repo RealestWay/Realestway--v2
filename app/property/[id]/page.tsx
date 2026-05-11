@@ -47,24 +47,22 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function PropertyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
-  let initialData: Property | undefined;
-
   try {
     const res = await ApiService.properties.getOne(id) as { success: boolean, data: Property };
-    if (res && res.success) {
-      initialData = res.data;
+    if (res && res.success && res.data) {
+      const p = res.data;
+      const stateSlug = p.state?.toLowerCase().replace(/\s+/g, '-') || 'nigeria';
+      const citySlug = p.city?.toLowerCase().replace(/\s+/g, '-') || 'city';
+      const slug = p.slug || p.id;
+      
+      // Permanent redirect to the new SEO URL structure
+      redirect(`/properties/${p.category}/${stateSlug}/${citySlug}/${slug}`);
     }
   } catch (err) {
-    console.error('SSR fetch failed for property:', id, err);
+    console.error('Redirect failed for property:', id, err);
   }
 
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Navbar />
-      <Box component="main" sx={{ flex: 1 }}>
-        <PropertyDetailPage initialData={initialData} />
-      </Box>
-      <Footer />
-    </Box>
-  );
+  // Fallback to search if property not found
+  redirect('/search');
 }
+

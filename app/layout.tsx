@@ -43,6 +43,12 @@ export const metadata: Metadata = {
     images: ['/favicon.jpg'],
   },
   metadataBase: new URL('https://realestway.com'),
+  alternates: {
+    canonical: '/',
+  },
+  other: {
+    'dns-prefetch': 'https://d1dlk0ceeglhu7.cloudfront.net',
+  },
 };
 
 export const viewport: Viewport = {

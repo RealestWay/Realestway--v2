@@ -51,6 +51,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import ApiService from '@/src/services/api';
+import { getPropertyUrl } from '../../utils/urls';
 
 type TabValue = 'stats' | 'properties' | 'settings';
 type PropertyTab = 'all' | 'active' | 'unavailable' | 'draft';
@@ -378,7 +379,7 @@ export default function AgentDashboard() {
     } catch (e) {
       console.error('Failed to cache property', e);
     }
-    router.push(`/property/${prop.uuid || prop.id}`);
+    router.push(getPropertyUrl(prop));
     handleMenuClose();
   };
 

@@ -100,7 +100,9 @@ export interface Property {
   is_liked?: boolean;
   likes_count?: number;
   land_size?: string;
+  house_type?: string | null;
   consent_given?: boolean;
+  total_package?: number;
 }
 
 export interface SearchFilters {

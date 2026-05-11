@@ -32,6 +32,7 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { getCache, setCache } from '../../utils/cache';
 import { Divider } from '@mui/material';
+import { getPropertyUrl } from '../../utils/urls';
 
 export default function PropertyModeration() {
   const router = useRouter();
@@ -294,7 +295,7 @@ export default function PropertyModeration() {
                     <TableCell align="right">
                       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
                         <Tooltip title="View Property">
-                          <IconButton size="small" color="primary" onClick={() => window.open(`/property/${property.uuid || property.id}`, '_blank')} sx={{ bgcolor: 'rgba(27,79,216,0.05)', '&:hover': { bgcolor: 'rgba(27,79,216,0.1)' }}}>
+                          <IconButton size="small" color="primary" onClick={() => window.open(getPropertyUrl(property), '_blank')} sx={{ bgcolor: 'rgba(27,79,216,0.05)', '&:hover': { bgcolor: 'rgba(27,79,216,0.1)' }}}>
                             <VisibilityOutlinedIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
