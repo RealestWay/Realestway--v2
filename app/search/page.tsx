@@ -35,7 +35,7 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
     ? `${titleParts} | Realestway`
     : 'Search Properties in Nigeria | Realestway';
 
-  const description = `Explore a wide range of ${bedroomLabel.trim() || 'verified'}${type ? ' ' + type.toLowerCase() + 's' : ' properties'} ${actionLabel ? actionLabel + ' ' : ''}${locationLabel}, sourced daily from live listings and property-sharing communities. Find your ideal home on Realestway.`;
+  const description = `Explore a wide range of ${bedroomLabel.trim() }${type ? ' ' + type.toLowerCase() + 's' : ' properties'} ${actionLabel ? actionLabel + ' ' : ''}${locationLabel}, sourced daily from live listings and property-sharing communities. Find your ideal home on Realestway.`;
 
   // Canonical: clean URL with only meaningful params
   const canonicalParams = new URLSearchParams();
@@ -68,13 +68,48 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
   };
 }
 
-export default function SearchPage() {
+import ApiService from '@/src/services/api';
+
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const params = await searchParams;
+  
+  // Construct search query for the server-side fetch (matching client-side logic in SearchResultsPage.tsx)
+  const query = new URLSearchParams();
+  const q = params.q || params.search || '';
+  if (q) query.set('search', typeof q === 'string' ? q : q[0]);
+  
+  const city = params.city || '';
+  if (city) query.set('city', typeof city === 'string' ? city : city[0]);
+  
+  const category = params.category || 'rent';
+  query.set('category', typeof category === 'string' ? category : category[0]);
+  
+  if (params.type) {
+    const types = Array.isArray(params.type) ? params.type : [params.type];
+    types.forEach(t => query.append('house_type[]', t as string));
+  }
+  
+  const sort = params.sort || 'newest';
+  query.set('sort', typeof sort === 'string' ? sort : sort[0]);
+
+  // Note: limit and page are added inside the hook on the client, so we don't add them to the key string here
+
+  let initialData = null;
+  try {
+    // Fetch with limit/page, but the 'query' object remains clean to match client key
+    const fetchUrl = `${query.toString()}${query.toString() ? '&' : ''}limit=20&page=1`;
+    const response: any = await ApiService.properties.getAll(fetchUrl);
+    initialData = response; 
+  } catch (err) {
+    console.error('SSR Search Fetch Failed:', err);
+  }
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', position: 'relative' }}>
       <Navbar position="absolute" />
       <Box component="main" sx={{ flex: 1 }}>
         <Suspense fallback={<Box sx={{ p: 5, textAlign: 'center' }}>Loading search results...</Box>}>
-          <SearchResultsPage />
+          <SearchResultsPage initialData={initialData} />
         </Suspense>
       </Box>
       <Footer />

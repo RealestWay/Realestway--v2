@@ -163,7 +163,7 @@ function AdminDashboardContent() {
     setActiveTab(index);
     setMountedTabs(prev => new Set(prev).add(index));
     const tabId = menuItems[index].id;
-    router.push(`?tab=${tabId}`, { scroll: false });
+    window.history.pushState(null, '', `?tab=${tabId}`);
   };
 
   return (

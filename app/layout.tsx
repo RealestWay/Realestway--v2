@@ -21,8 +21,8 @@ import QueryProvider from '../src/components/providers/QueryProvider';
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 
 export const metadata: Metadata = {
-  title: 'Realestway | Houses, Apartments, Lands for Sale or Rent in Nigeria',
-  description: 'Find houses, apartments, lands, and commercial properties for sale or rent across Nigeria. Browse thousands of listings, connect with agents, and discover properties faster.',
+  title: 'Realestway |  Houses, Shortlet, Apartments & Lands for Sale or Rent in Nigeria',
+  description: 'Find houses, apartments, lands, shortlets and commercial properties for sale or rent across Nigeria. Browse thousands of listings, connect with agents, and discover properties faster.',
   manifest: '/manifest.json',
   icons: {
     icon: '/favicon.jpg',

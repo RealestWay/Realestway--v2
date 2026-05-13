@@ -203,9 +203,11 @@ export default function DynamicPropertySections({
         const bgColor = index % 2 === 0 ? 'white' : 'background.default';
         const viewAllPath = '/search';
 
+        const isCalculated = ['recommended', 'luxury', 'affordable'].includes(sectionId);
         const fixedSection = homeData.sections?.[sectionId];
-        if (fixedSection) {
-          sectionData = fixedSection;
+        
+        if (fixedSection || isCalculated) {
+          sectionData = fixedSection || [];
           switch (sectionId) {
             case 'recent':
               sectionTitle = 'Recently Added Properties';
@@ -226,14 +228,14 @@ export default function DynamicPropertySections({
               break;
             case 'luxury':
               sectionData = [...(homeData.sections?.recent || []), ...(homeData.sections?.featured || [])]
-                .filter((p) => (p.price || p.total_package) > 10000000)
+                .filter((p: any) => (p.price || p.total_package) > 10000000)
                 .slice(0, 8);
               sectionTitle = 'Luxury Homes';
               sectionSubtitle = 'Premium living spaces';
               break;
             case 'affordable':
               sectionData = [...(homeData.sections?.recent || []), ...(homeData.sections?.featured || [])]
-                .filter((p) => (p.price || p.total_package) > 0 && (p.price || p.total_package) < 2000000)
+                .filter((p: any) => (p.price || p.total_package) > 0 && (p.price || p.total_package) < 2000000)
                 .slice(0, 8);
               sectionTitle = 'Affordable Homes';
               sectionSubtitle = 'Budget friendly options';

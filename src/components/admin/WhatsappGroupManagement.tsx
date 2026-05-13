@@ -224,11 +224,11 @@ export default function WhatsappGroupManagement() {
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                         <Avatar sx={{ bgcolor: '#25D366', color: 'white', fontWeight: 800, width: 36, height: 36 }}>
-                          {(group.group_name || 'U').charAt(0)}
+                          {(group.name || 'U').charAt(0)}
                         </Avatar>
                         <Box>
                           <Typography variant="body2" fontWeight={700} sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {group.group_name || 'Unnamed Group'}
+                            {group.name || 'Unnamed Group'}
                           </Typography>
                           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.7rem' }}>
                             {group.group_id}

@@ -103,6 +103,12 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
     const fetchProperty = async () => {
       if (!propertyIdentifier) return;
       
+      // SSR Skip: If we already have initialData from the server for this property, skip the fetch
+      if (initialData && (String(initialData.slug) === String(propertyIdentifier) || String(initialData.uuid) === String(propertyIdentifier) || String(initialData.id) === String(propertyIdentifier))) {
+        if (loading) setLoading(false);
+        return;
+      }
+
       const isSlug = !/^\d+$/.test(propertyIdentifier);
       
       // Only show main spinner if we have absolutely nothing in session storage
@@ -349,9 +355,12 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
               )}
               <Box sx={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 1 }}>
                 <Chip
-                  label={property.category === 'rent' ? 'For Rent' : 'For Sale'}
+                  label={
+                    (property.property_category === 'shortlet') ? 'Shortlet' :
+                    (property.property_category === 'rent') ? 'For Rent' : 'For Sale'
+                  }
                   sx={{
-                    bgcolor: property.category === 'rent' ? 'secondary.main' : 'primary.main',
+                    bgcolor: (property.property_category === 'rent' || property.category === 'rent' || property.property_category === 'shortlet') ? 'secondary.main' : 'primary.main',
                     color: 'white',
                     fontWeight: 700,
                     fontSize: '0.8rem',
@@ -560,7 +569,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
               sx={{ p: { xs: 2.5, md: 3 }, border: '1px solid', borderColor: 'divider', borderRadius: 3, mb: 3, position: 'sticky', top: 90 }}
             >
               <Typography variant="overline" color="primary" sx={{ display: 'block', mb: 0.5 }}>
-                {property.property_category === 'shortlet' ? 'Shortlet Price' : (property.property_category === 'rent' || property.category === 'rent') ? 'Annual Rent' : 'Sale Price'}
+                {(property.property_category === 'shortlet') ? 'Shortlet Price' : (property.property_category === 'rent') ? 'Annual Rent' : 'Sale Price'}
               </Typography>
               <Typography variant="h4" fontWeight={900} color="secondary.main" sx={{ fontFamily: '"Arial Black", sans-serif', mb: 0.5 }}>
                 {formatPrice(price)}
@@ -664,7 +673,7 @@ export default function PropertyDetailPage({ initialData }: { initialData?: Prop
                         variant="outlined"
                         fullWidth
                         startIcon={<WhatsAppIcon />}
-                        href={`https://wa.me/${(agent.whatsapp || agent.phone_number || agent.phone).replace(/\D/g, '')}?text=${encodeURIComponent(
+                        href={`https://wa.me/${(agent.whatsapp || agent.phone).replace(/\D/g, '')}?text=${encodeURIComponent(
                           `Hello, I'm interested in this property: ${property.title}. View details here: ${typeof window !== 'undefined' ? window.location.href : ''}`
                         )}`}
                         target="_blank"

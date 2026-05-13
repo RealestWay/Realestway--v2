@@ -5,6 +5,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import CategoryCard from './CategoryCard';
+import ApiService from '@/src/services/api';
 
 interface CategoryCardsSectionProps {
   homeData: any;
@@ -19,9 +20,9 @@ export default function CategoryCardsSection({ homeData, loading }: CategoryCard
     {
       title: 'Rent',
       description: 'Find apartments for yearly rent',
-      image: homeData.previews?.rent?.[0],
+      image: ApiService.getMediaUrl(homeData.previews?.rent?.[0]),
       href: '/search?category=rent',
-      previewImages: homeData.previews?.rent || [],
+      previewImages: (homeData.previews?.rent || []).map((img: string) => ApiService.getMediaUrl(img)),
       count: homeData.counts?.rent ? countStr(homeData.counts.rent) : '0',
       priceOverlay: null,
       loading,
@@ -29,9 +30,9 @@ export default function CategoryCardsSection({ homeData, loading }: CategoryCard
     {
       title: 'Buy',
       description: 'Own your home with premium listings',
-      image: homeData.previews?.buy?.[0],
+      image: ApiService.getMediaUrl(homeData.previews?.buy?.[0]),
       href: '/search?category=sale',
-      previewImages: homeData.previews?.buy || [],
+      previewImages: (homeData.previews?.buy || []).map((img: string) => ApiService.getMediaUrl(img)),
       count: homeData.counts?.sale ? countStr(homeData.counts.sale) : '0',
       priceOverlay: null,
       loading,
@@ -39,9 +40,9 @@ export default function CategoryCardsSection({ homeData, loading }: CategoryCard
     {
       title: 'Shortlet',
       description: 'Comfortable stays for short durations',
-      image: homeData.previews?.shortlet?.[0],
+      image: ApiService.getMediaUrl(homeData.previews?.shortlet?.[0]),
       href: '/search?category=shortlet',
-      previewImages: homeData.previews?.shortlet || [],
+      previewImages: (homeData.previews?.shortlet || []).map((img: string) => ApiService.getMediaUrl(img)),
       count: homeData.counts?.shortlet ? countStr(homeData.counts.shortlet) : '0',
       priceOverlay: null,
       loading,
@@ -49,9 +50,9 @@ export default function CategoryCardsSection({ homeData, loading }: CategoryCard
     {
       title: 'Land',
       description: 'Invest in the future with prime land',
-      image: homeData.previews?.land?.[0],
+      image: ApiService.getMediaUrl(homeData.previews?.land?.[0]),
       href: '/search?category=sale&house_type[]=Land',
-      previewImages: homeData.previews?.land || [],
+      previewImages: (homeData.previews?.land || []).map((img: string) => ApiService.getMediaUrl(img)),
       count: homeData.counts?.land ? countStr(homeData.counts.land) : '0',
       priceOverlay: null,
       loading,

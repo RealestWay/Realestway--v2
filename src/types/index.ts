@@ -11,11 +11,10 @@ export type PropertyType =
   | 'Mansion'
   | 'Office Space'
   | 'Shop'
-  | 'Warehouse'
-  | 'Land';
+  | 'Warehouse';
 
 export interface PropertyFeature {
-  tag: string;
+  tag: string;  
   value: number | string | boolean;
 }
 
@@ -103,6 +102,10 @@ export interface Property {
   house_type?: string | null;
   consent_given?: boolean;
   total_package?: number;
+  caution_fee?: number;
+  inspection_fee?: number;
+  legal_fee?: number;
+  agency_fee?: number;
 }
 
 export interface SearchFilters {

@@ -92,7 +92,14 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
   const bathrooms = getFeatureValue(property.features, 'bathrooms') || property.bathrooms;
   const parking = getFeatureValue(property.features, 'parking');
 
-  const images = (property.media_urls || property.images || []).map((url: string) => ApiService.getMediaUrl(url));
+  const images = useMemo(() => {
+    // 1. Check media relationship (objects)
+    if (property.media && property.media.length > 0) {
+      return property.media.map(m => ApiService.getMediaUrl(m.file_url));
+    }
+    // 2. Fallback to media_urls or images (strings)
+    return (property.media_urls || property.images || []).map((url: string) => ApiService.getMediaUrl(url));
+  }, [property.media, property.media_urls, property.images]);
   const displayPrice = property.total_package || property.basic_rent || property.price || 0;
   const isVideo = useMemo(() => {
     return (url: string) => url?.toLowerCase().match(/\.(mp4|webm|ogg)$/) || url?.includes('uploads') && url?.split('.').pop()?.match(/(mp4|webm|ogg)$/i);
@@ -222,10 +229,13 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
         )}
         <Box sx={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 1 }}>
           <Chip
-            label={property.property_category === 'rent' ? 'For Rent' : 'For Sale'}
+            label={
+              (property.property_category === 'shortlet') ? 'Shortlet' :
+              (property.property_category === 'rent') ? 'For Rent' : 'For Sale'
+            }
             size="small"
             sx={{
-              bgcolor: (property.property_category === 'rent' || property.category === 'rent') ? 'secondary.main' : 'primary.main',
+              bgcolor: (property.property_category === 'rent' || property.property_category === 'shortlet') ? 'secondary.main' : 'primary.main',
               color: 'white',
               fontWeight: 600,
               fontSize: '0.72rem',
@@ -360,7 +370,7 @@ export default function PropertyCard({ property, onSave, compact = false }: Prop
           <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', mt: 'auto' }}>
             <Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.25 }}>
-                {property.property_category === 'shortlet' ? 'Shortlet Price' : property.property_category === 'rent' ? 'Rent Price' : 'Sales Price'}
+                {(property.property_category === 'shortlet') ? 'Shortlet Price' : (property.property_category === 'rent') ? 'Rent Price' : 'Sales Price'}
               </Typography>
               <Typography
                 variant="h6"

@@ -8,74 +8,83 @@ import { useUserLocation } from '../hooks/useUserLocation';
 import { useAuth } from '../context/AuthContext';
 import MobileNav from '../components/layout/MobileNav';
 
-import dynamic from 'next/dynamic';
-import Skeleton from '@mui/material/Skeleton';
+import CitiesCarousel from '../components/home/CitiesCarousel';
+import DynamicPropertySections from '../components/home/DynamicPropertySections';
+import PopularCitiesGrid from '../components/home/PopularCitiesGrid';
+import BlogSection from '../components/home/BlogSection';
+import HowItWorksSection from '../components/home/HowItWorksSection';
 import HeroSection from '../components/home/HeroSection';
 import CategoryCardsSection from '../components/home/CategoryCardsSection';
 import { useHomeData, useCities } from '../hooks/useHomeData';
-
-/* ── Dynamic sections (below the fold) ── */
-const CitiesCarousel = dynamic(() => import('../components/home/CitiesCarousel'), {
-  loading: () => <Skeleton variant="rectangular" height={200} sx={{ my: 4, borderRadius: 2 }} />
-});
-const DynamicPropertySections = dynamic(() => import('../components/home/DynamicPropertySections'), {
-  loading: () => <Skeleton variant="rectangular" height={600} sx={{ my: 4, borderRadius: 2 }} />
-});
-const PopularCitiesGrid = dynamic(() => import('../components/home/PopularCitiesGrid'), {
-  loading: () => <Skeleton variant="rectangular" height={400} sx={{ my: 4, borderRadius: 2 }} />
-});
-const BlogSection = dynamic(() => import('../components/home/BlogSection'), {
-  loading: () => <Skeleton variant="rectangular" height={300} sx={{ my: 4, borderRadius: 2 }} />
-});
-const HowItWorksSection = dynamic(() => import('../components/home/HowItWorksSection'), {
-  loading: () => <Skeleton variant="rectangular" height={300} sx={{ my: 4, borderRadius: 2 }} />
-});
+import Skeleton from '@mui/material/Skeleton';
 
 /* ══════════════════════════════════════════
    MAIN LANDING PAGE
    — Owns all state & data-fetching.
    — Composes modular section components.
 ══════════════════════════════════════════ */
-export default function LandingPage() {
+export default function LandingPage({ 
+  initialHomeData, 
+  initialCitiesData 
+}: { 
+  initialHomeData?: any; 
+  initialCitiesData?: any[]; 
+}) {
   const router = useRouter();
   const { user } = useAuth();
 
   /* ── Scroll / hero state ── */
   const [scrolled, setScrolled] = useState(false);
-  const [filterTop, setFilterTop] = useState(false);
-  const [isStickyFilterExpanded, setIsStickyFilterExpanded] = useState(true);
-  const filterRef = useRef<HTMLDivElement>(null);
+  const [isStickyFilterExpanded, setIsStickyFilterExpanded] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
+  const [filterTop, setFilterTop] = useState(0);
 
-  /* ── Home data via TanStack Query ── */
-  const { data: homeQueryData, isLoading: homeLoading } = useHomeData();
-  const { data: popularCities = [] } = useCities();
+  /* ── Data Fetching ── */
+  const { data: homeQueryData, isLoading: homeLoading } = useHomeData(initialHomeData);
+  const { data: popularCities = (initialCitiesData || []) } = useCities(initialCitiesData);
 
   const [homeData, setHomeData] = useState<any>({
-    sections: {
+    sections: initialHomeData?.sections || {
       recent: [], featured: [], hot_deals: [],
       popular: [], shortlet: [], land: [], rent: [], buy: [],
     },
-    counts: { rent: 0, sale: 0, shortlet: 0, land: 0 },
-    avg_prices: { rent: 0, sale: 0, shortlet: 0, land: 0 },
+    counts: initialHomeData?.counts || { rent: 0, sale: 0, shortlet: 0, land: 0 },
+    avg_prices: initialHomeData?.avg_prices || { rent: 0, sale: 0, shortlet: 0, land: 0 },
+    previews: initialHomeData?.previews || { rent: [], buy: [], shortlet: [], land: [] },
   });
+  
   const [visibleCitiesCount, setVisibleCitiesCount] = useState(12);
-  const [shuffledSections, setShuffledSections] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  
+  // Initialize shuffled sections with a stable order first (to prevent hydration mismatch)
+  const [shuffledSections, setShuffledSections] = useState<string[]>(['recent', 'featured', 'popular', 'recommended', 'luxury', 'affordable']);
+  const [loading, setLoading] = useState(!initialHomeData);
 
   // Sync query data to local state for internal filtering/shuffling
   useEffect(() => {
-    if (homeQueryData) {
-      setHomeData(homeQueryData);
-      setLoading(false);
-      if (shuffledSections.length === 0) {
-        const allSections = ['recent', 'featured', 'popular', 'recommended', 'luxury', 'affordable'];
-        setShuffledSections([...allSections].sort(() => 0.5 - Math.random()));
+    const data = homeQueryData || initialHomeData;
+    if (data) {
+      // Smart Fallback: If 'previews' is missing (old backend), extract them from sections
+      const processedData = { ...data };
+      if (!processedData.previews || Object.keys(processedData.previews).length === 0) {
+        processedData.previews = {
+          rent: (data.sections?.rent || []).slice(0, 4).map((p: any) => p.media?.[0]?.file_url || p.media_urls?.[0]),
+          buy: (data.sections?.buy || []).slice(0, 4).map((p: any) => p.media?.[0]?.file_url || p.media_urls?.[0]),
+          shortlet: (data.sections?.shortlet || []).slice(0, 4).map((p: any) => p.media?.[0]?.file_url || p.media_urls?.[0]),
+          land: (data.sections?.land || []).slice(0, 4).map((p: any) => p.media?.[0]?.file_url || p.media_urls?.[0]),
+        };
       }
+      
+      setHomeData(processedData);
+      setLoading(false);
+      
+      // Shuffle only on the client to keep it hydration-safe
+      const allSections = ['recent', 'featured', 'popular', 'recommended', 'luxury', 'affordable'];
+      setShuffledSections([...allSections].sort(() => 0.5 - Math.random()));
     } else if (!homeLoading) {
       setLoading(false);
     }
-  }, [homeQueryData, homeLoading, shuffledSections.length]);
+  }, [homeQueryData, homeLoading, initialHomeData]);
 
   /* ── Filter / search state ── */
   const [globalCategory, setGlobalCategory] = useState<'rent' | 'sale'>('rent');
@@ -225,6 +234,8 @@ export default function LandingPage() {
         totalResults={totalResults}
         searchResults={searchResults}
       />
+
+      {/* ══ POPULAR CITIES GRID ══ */}
 
       {/* ══ POPULAR CITIES GRID ══ */}
       <PopularCitiesGrid

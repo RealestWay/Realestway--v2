@@ -1,20 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import ApiService from '../services/api';
 
-export function useHomeData() {
+export function useHomeData(initialData?: any) {
   return useQuery({
     queryKey: ['home_data'],
     queryFn: async () => {
       const response: any = await ApiService.properties.getHome();
       return response;
     },
-    // The data is saved to localStorage via PersistQueryClientProvider
-    // but we can also set initialData from localStorage if we want it to be synchronous
-    // however, PersistQueryClientProvider handles this more elegantly.
+    initialData,
   });
 }
 
-export function useCities() {
+export function useCities(initialData?: any[]) {
   return useQuery({
     queryKey: ['available_cities'],
     queryFn: async () => {
@@ -28,5 +26,6 @@ export function useCities() {
       }
       return [];
     },
+    initialData,
   });
 }

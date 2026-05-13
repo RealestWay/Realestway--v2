@@ -63,7 +63,7 @@ export default function Navbar({ position = 'fixed' }: { position?: 'fixed' | 'a
   }, []);
 
   /* Pages where the navbar starts transparent (full-bleed hero image beneath) */
-  const TRANSPARENT_PAGES = ['/', '/about', '/contact', '/blogs', '/requests'];
+  const TRANSPARENT_PAGES = ['/', '/about', '/contact', '/blogs'];
   const isTransparentPage = TRANSPARENT_PAGES.includes(pathname ?? '');
 
   /* On transparent pages: glass when not scrolled, solid white when scrolled */
@@ -86,6 +86,10 @@ export default function Navbar({ position = 'fixed' }: { position?: 'fixed' | 'a
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
   const queryClient = useQueryClient();
 

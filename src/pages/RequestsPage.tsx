@@ -79,50 +79,91 @@ const RequestsPage: React.FC = () => {
         <Box sx={{ bgcolor: '#F8FAFC', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <Navbar position="absolute" />
             
-            <Container maxWidth="lg" sx={{ pt: { xs: 12, md: 16 }, pb: 10, flex: 1 }}>
+            <Container maxWidth="lg" sx={{ pt: { xs: 6, md: 10 }, pb: 10, flex: 1 }}>
                 {/* Header Section */}
-                <Box sx={{ mb: 8, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'center', md: 'flex-start' }, gap: 4, textAlign: { xs: 'center', md: 'left' } }}>
-                    <Box>
-                        <Typography 
-                            variant="h2" 
-                            fontWeight={900} 
-                            sx={{ 
-                                fontSize: { xs: '2.5rem', md: '3.5rem' }, 
-                                color: 'text.primary', 
-                                mb: 2,
-                                letterSpacing: '-0.02em'
-                            }}
-                        >
-                            House <Box component="span" sx={{ color: 'primary.main' }}>Requests</Box>
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.1rem', maxWidth: 600 }}>
-                            Browse what people are looking for. If you have a matching property, 
-                            reach out and close the deal.
-                        </Typography>
-                    </Box>
-                    <Button
-                        variant="contained"
-                        size="large"
-                        onClick={() => toast.info('Submit Request feature is coming soon!')}
+                <Box sx={{ mb: 8, textAlign: 'center' }}>
+                    <Chip 
+                        label="Community Requests" 
+                        color="primary" 
+                        variant="outlined"
+                        sx={{ mb: 2, fontWeight: 700, px: 2, borderRadius: '100px', borderColor: 'primary.light', color: 'primary.main' }} 
+                    />
+                    <Typography 
+                        variant="h2" 
+                        fontWeight={900} 
                         sx={{ 
-                            bgcolor: 'secondary.main', 
-                            color: 'white', 
-                            px: 4, 
-                            py: 1.5, 
-                            borderRadius: '12px',
-                            fontWeight: 700,
-                            textTransform: 'none',
-                            boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
-                            '&:hover': { bgcolor: 'secondary.dark' }
+                            fontSize: { xs: '2.5rem', md: '4rem' }, 
+                            color: 'text.primary', 
+                            mb: 2,
+                            letterSpacing: '-0.04em',
+                            lineHeight: 1.1
                         }}
                     >
-                        Submit Request
-                    </Button>
+                        Real Estate <Box component="span" sx={{ color: 'primary.main' }}>Matchmaker</Box>
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.2rem', maxWidth: 700, mx: 'auto', mb: 5 }}>
+                        Discover what prospective tenants and buyers are searching for. 
+                        Bridge the gap between demand and your available listings.
+                    </Typography>
+                    
+                    <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 6 }}>
+                        <Button
+                            variant="contained"
+                            size="large"
+                            onClick={() => toast.info('Submit Request feature is coming soon!')}
+                            sx={{ 
+                                bgcolor: 'secondary.main', 
+                                color: 'white', 
+                                px: 5, 
+                                py: 2, 
+                                borderRadius: '16px',
+                                fontWeight: 800,
+                                textTransform: 'none',
+                                fontSize: '1.1rem',
+                                boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                                '&:hover': { bgcolor: 'secondary.dark', transform: 'translateY(-2px)' },
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            Post a Request
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            size="large"
+                            sx={{ 
+                                px: 4, 
+                                py: 2, 
+                                borderRadius: '16px',
+                                fontWeight: 800,
+                                textTransform: 'none',
+                                fontSize: '1.1rem',
+                                border: '2px solid',
+                                borderColor: 'grey.200',
+                                color: 'text.primary',
+                                '&:hover': { border: '2px solid', borderColor: 'primary.main', bgcolor: 'transparent' }
+                            }}
+                        >
+                            How it Works
+                        </Button>
+                    </Stack>
+
+                    <Divider sx={{ maxWidth: 200, mx: 'auto', borderBottomWidth: 3, borderRadius: 2, borderColor: 'primary.light', opacity: 0.3 }} />
                 </Box>
 
                 {/* Filters Paper */}
-                <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid', borderColor: 'divider', mb: 6, bgcolor: 'white' }}>
-                    <Stack direction="row" spacing={1} sx={{ mb: 4, justifyContent: { xs: 'center', md: 'flex-start' } }}>
+                <Paper 
+                    elevation={0} 
+                    sx={{ 
+                        p: { xs: 3, md: 5 }, 
+                        borderRadius: '32px', 
+                        border: '1px solid', 
+                        borderColor: 'divider', 
+                        mb: 8, 
+                        bgcolor: 'white',
+                        boxShadow: '0 20px 40px rgba(0,0,0,0.04)'
+                    }}
+                >
+                    <Stack direction="row" spacing={1.5} sx={{ mb: 4, flexWrap: 'wrap', gap: 1 }}>
                         {['all', 'rent', 'sale'].map((cat) => (
                             <Chip
                                 key={cat}
@@ -130,88 +171,109 @@ const RequestsPage: React.FC = () => {
                                 onClick={() => handleCategoryChange(cat)}
                                 sx={{
                                     px: 2,
-                                    py: 2.5,
-                                    fontWeight: 700,
+                                    py: 2.8,
+                                    fontWeight: 800,
                                     fontSize: '0.85rem',
-                                    bgcolor: appliedFilters.category === cat ? 'primary.main' : 'grey.100',
-                                    color: appliedFilters.category === cat ? 'white' : 'text.secondary',
-                                    '&:hover': { bgcolor: appliedFilters.category === cat ? 'primary.dark' : 'grey.200' },
-                                    transition: 'all 0.2s'
+                                    bgcolor: appliedFilters.category === cat ? 'primary.main' : 'rgba(0,162,86,0.05)',
+                                    color: appliedFilters.category === cat ? 'white' : 'primary.main',
+                                    border: '1px solid',
+                                    borderColor: appliedFilters.category === cat ? 'primary.main' : 'transparent',
+                                    '&:hover': { bgcolor: appliedFilters.category === cat ? 'primary.dark' : 'rgba(0,162,86,0.1)' },
+                                    transition: 'all 0.25s cubic-bezier(0.4,0,0.2,1)',
+                                    borderRadius: '12px'
                                 }}
                             />
                         ))}
                     </Stack>
 
-                    <Grid container spacing={2} alignItems="center">
+                    <Grid container spacing={3} alignItems="center">
                         <Grid size={{ xs: 12, md: 3 }}>
-                            <TextField
-                                fullWidth
-                                placeholder="House Type (e.g. Duplex)"
-                                value={draftFilters.house_type}
-                                onChange={(e) => setDraftFilters(prev => ({ ...prev, house_type: e.target.value }))}
-                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <HomeIcon size={18} color="#94A3B8" />
-                                        </InputAdornment>
-                                    ),
-                                    sx: { borderRadius: '14px', bgcolor: '#F8FAFC' }
-                                }}
-                            />
+                            <Box>
+                                <Typography variant="caption" fontWeight={700} sx={{ ml: 1, mb: 1, display: 'block', color: 'text.secondary', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    House Type
+                                </Typography>
+                                <TextField
+                                    fullWidth
+                                    placeholder="e.g. Duplex"
+                                    value={draftFilters.house_type}
+                                    onChange={(e) => setDraftFilters(prev => ({ ...prev, house_type: e.target.value }))}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <HomeIcon size={20} color="#00A256" />
+                                            </InputAdornment>
+                                        ),
+                                        sx: { borderRadius: '16px', bgcolor: '#F8FAFC', border: '1px solid transparent', '&:hover': { borderColor: 'primary.light' } }
+                                    }}
+                                />
+                            </Box>
                         </Grid>
                         <Grid size={{ xs: 12, md: 3 }}>
-                            <TextField
-                                fullWidth
-                                placeholder="City"
-                                value={draftFilters.city}
-                                onChange={(e) => setDraftFilters(prev => ({ ...prev, city: e.target.value }))}
-                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon size={18} color="#94A3B8" />
-                                        </InputAdornment>
-                                    ),
-                                    sx: { borderRadius: '14px', bgcolor: '#F8FAFC' }
-                                }}
-                            />
+                            <Box>
+                                <Typography variant="caption" fontWeight={700} sx={{ ml: 1, mb: 1, display: 'block', color: 'text.secondary', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    City
+                                </Typography>
+                                <TextField
+                                    fullWidth
+                                    placeholder="Enter city"
+                                    value={draftFilters.city}
+                                    onChange={(e) => setDraftFilters(prev => ({ ...prev, city: e.target.value }))}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon size={20} color="#00A256" />
+                                            </InputAdornment>
+                                        ),
+                                        sx: { borderRadius: '16px', bgcolor: '#F8FAFC', border: '1px solid transparent', '&:hover': { borderColor: 'primary.light' } }
+                                    }}
+                                />
+                            </Box>
                         </Grid>
                         <Grid size={{ xs: 12, md: 3 }}>
-                            <TextField
-                                fullWidth
-                                placeholder="State"
-                                value={draftFilters.state}
-                                onChange={(e) => setDraftFilters(prev => ({ ...prev, state: e.target.value }))}
-                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <MapPinIcon size={18} color="#94A3B8" />
-                                        </InputAdornment>
-                                    ),
-                                    sx: { borderRadius: '14px', bgcolor: '#F8FAFC' }
-                                }}
-                            />
+                            <Box>
+                                <Typography variant="caption" fontWeight={700} sx={{ ml: 1, mb: 1, display: 'block', color: 'text.secondary', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    State
+                                </Typography>
+                                <TextField
+                                    fullWidth
+                                    placeholder="Enter state"
+                                    value={draftFilters.state}
+                                    onChange={(e) => setDraftFilters(prev => ({ ...prev, state: e.target.value }))}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <MapPinIcon size={20} color="#00A256" />
+                                            </InputAdornment>
+                                        ),
+                                        sx: { borderRadius: '16px', bgcolor: '#F8FAFC', border: '1px solid transparent', '&:hover': { borderColor: 'primary.light' } }
+                                    }}
+                                />
+                            </Box>
                         </Grid>
                         <Grid size={{ xs: 12, md: 3 }}>
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                onClick={handleSearch}
-                                startIcon={<SearchIcon size={18} />}
-                                sx={{ 
-                                    py: 1.8, 
-                                    borderRadius: '14px', 
-                                    fontWeight: 800, 
-                                    textTransform: 'none',
-                                    fontSize: '1rem',
-                                    bgcolor: 'primary.main',
-                                    '&:hover': { bgcolor: 'primary.dark' }
-                                }}
-                            >
-                                Search Requests
-                            </Button>
+                            <Box sx={{ pt: 3.5 }}>
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    onClick={handleSearch}
+                                    startIcon={<SearchIcon size={20} />}
+                                    sx={{ 
+                                        py: 2.2, 
+                                        borderRadius: '16px', 
+                                        fontWeight: 800, 
+                                        textTransform: 'none',
+                                        fontSize: '1rem',
+                                        bgcolor: 'primary.main',
+                                        '&:hover': { bgcolor: 'primary.dark', boxShadow: '0 8px 20px rgba(0,162,86,0.3)' },
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    Filter Results
+                                </Button>
+                            </Box>
                         </Grid>
                     </Grid>
                 </Paper>
@@ -238,102 +300,122 @@ const RequestsPage: React.FC = () => {
                                     <Paper 
                                         elevation={0} 
                                         sx={{ 
-                                            p: 4, 
-                                            borderRadius: '24px', 
+                                            p: { xs: 3, md: 4 }, 
+                                            borderRadius: '32px', 
                                             border: '1px solid', 
                                             borderColor: 'divider',
                                             height: '100%',
                                             display: 'flex',
                                             flexDirection: 'column',
-                                            transition: 'all 0.3s ease',
+                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            bgcolor: 'white',
                                             '&:hover': {
                                                 borderColor: 'primary.light',
-                                                boxShadow: '0 12px 24px rgba(0,0,0,0.04)',
-                                                transform: 'translateY(-4px)'
+                                                boxShadow: '0 20px 40px rgba(0,162,86,0.06)',
+                                                transform: 'translateY(-6px)'
                                             }
                                         }}
                                     >
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                                <Avatar sx={{ bgcolor: 'primary.50', color: 'primary.main', width: 40, height: 40 }}>
+                                                    <UserIcon size={20} />
+                                                </Avatar>
+                                                <Box>
+                                                    <Typography variant="subtitle2" fontWeight={800} color="text.primary">
+                                                        {request.requester_name || 'Verified Seeker'}
+                                                    </Typography>
+                                                    <Stack direction="row" spacing={0.5} alignItems="center" sx={{ color: 'text.disabled' }}>
+                                                        <ClockIcon size={12} />
+                                                        <Typography variant="caption" fontWeight={600}>
+                                                            {formatDistanceToNow(new Date(request.updated_at), { addSuffix: true })}
+                                                        </Typography>
+                                                    </Stack>
+                                                </Box>
+                                            </Box>
                                             <Chip 
-                                                icon={<TagIcon size={12} />}
-                                                label={request.house_type || 'General Request'} 
+                                                label={request.house_type || 'General'} 
                                                 size="small"
                                                 sx={{ 
-                                                    bgcolor: 'primary.50', 
-                                                    color: 'primary.main', 
+                                                    bgcolor: 'grey.50', 
+                                                    color: 'text.secondary', 
                                                     fontWeight: 700, 
                                                     fontSize: '0.7rem',
-                                                    px: 1
+                                                    px: 1,
+                                                    borderRadius: '8px'
                                                 }} 
                                             />
-                                            <Stack direction="row" spacing={0.5} alignItems="center" sx={{ color: 'text.disabled' }}>
-                                                <ClockIcon size={12} />
-                                                <Typography variant="caption" fontWeight={600}>
-                                                    {formatDistanceToNow(new Date(request.updated_at), { addSuffix: true })}
-                                                </Typography>
+                                        </Box>
+
+                                        <Box sx={{ flex: 1, mb: 4 }}>
+                                            <Typography 
+                                                variant="body1" 
+                                                sx={{ 
+                                                    fontSize: '1.15rem', 
+                                                    fontWeight: 600, 
+                                                    color: 'text.primary', 
+                                                    lineHeight: 1.6,
+                                                    fontFamily: '"Outfit", sans-serif',
+                                                }}
+                                            >
+                                                {request.message_text}
+                                            </Typography>
+                                        </Box>
+
+                                        <Box 
+                                            sx={{ 
+                                                p: 2.5, 
+                                                bgcolor: '#F8FAFC', 
+                                                borderRadius: '24px',
+                                                display: 'grid',
+                                                gridTemplateColumns: '1fr 1fr',
+                                                gap: 2
+                                            }}
+                                        >
+                                            <Stack direction="row" spacing={1.5} alignItems="center">
+                                                <Box sx={{ p: 1, bgcolor: 'white', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                                                    <MapPinIcon size={16} color="#00A256" />
+                                                </Box>
+                                                <Box>
+                                                    <Typography variant="caption" color="text.disabled" fontWeight={700} sx={{ textTransform: 'uppercase', fontSize: '0.6rem' }}>Location</Typography>
+                                                    <Typography variant="body2" color="text.primary" noWrap fontWeight={700}>
+                                                        {request.city || 'Anywhere'}, {request.state || 'NG'}
+                                                    </Typography>
+                                                </Box>
+                                            </Stack>
+
+                                            <Stack direction="row" spacing={1.5} alignItems="center">
+                                                <Box sx={{ p: 1, bgcolor: 'white', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                                                    <TagIcon size={16} color="#00A256" />
+                                                </Box>
+                                                <Box>
+                                                    <Typography variant="caption" color="text.disabled" fontWeight={700} sx={{ textTransform: 'uppercase', fontSize: '0.6rem' }}>Budget</Typography>
+                                                    <Typography variant="body2" color="primary.main" noWrap fontWeight={800}>
+                                                        {request.budget || 'Negotiable'}
+                                                    </Typography>
+                                                </Box>
                                             </Stack>
                                         </Box>
 
-                                        <Typography 
-                                            variant="body1" 
+                                        <Button 
+                                            fullWidth
+                                            component="a"
+                                            href={`tel:${request.requester_phone}`}
+                                            variant="contained"
+                                            startIcon={<PhoneIcon size={18} />}
                                             sx={{ 
-                                                fontSize: '1.1rem', 
-                                                fontWeight: 500, 
-                                                color: 'text.primary', 
-                                                mb: 4, 
-                                                lineHeight: 1.6,
-                                                flex: 1,
-                                                fontStyle: 'italic'
+                                                mt: 3,
+                                                bgcolor: 'primary.main', 
+                                                color: 'white',
+                                                fontWeight: 800, 
+                                                textTransform: 'none',
+                                                py: 1.8,
+                                                borderRadius: '16px',
+                                                '&:hover': { bgcolor: 'primary.dark', boxShadow: '0 8px 20px rgba(0,162,86,0.2)' }
                                             }}
                                         >
-                                            "{request.message_text}"
-                                        </Typography>
-
-                                        <Divider sx={{ mb: 3, borderStyle: 'dashed' }} />
-
-                                        <Grid container spacing={2}>
-                                            <Grid size={6}>
-                                                <Stack direction="row" spacing={1} alignItems="center">
-                                                    <MapPinIcon size={16} color="#94A3B8" />
-                                                    <Typography variant="body2" color="text.secondary" noWrap fontWeight={500}>
-                                                        {request.city || 'Anywhere'}, {request.state || 'NG'}
-                                                    </Typography>
-                                                </Stack>
-                                            </Grid>
-                                            <Grid size={6}>
-                                                <Stack direction="row" spacing={1} alignItems="center">
-                                                    <UserIcon size={16} color="#94A3B8" />
-                                                    <Typography variant="body2" color="text.secondary" noWrap fontWeight={500}>
-                                                        {request.requester_name || 'Anonymous'}
-                                                    </Typography>
-                                                </Stack>
-                                            </Grid>
-                                            <Grid size={6}>
-                                                <Stack direction="row" spacing={1} alignItems="center">
-                                                    <TagIcon size={16} color="#94A3B8" />
-                                                    <Typography variant="body2" color="text.secondary" noWrap fontWeight={500}>
-                                                        {request.budget || 'Negotiable'}
-                                                    </Typography>
-                                                </Stack>
-                                            </Grid>
-                                            <Grid size={6}>
-                                                <Button 
-                                                    component="a"
-                                                    href={`tel:${request.requester_phone}`}
-                                                    startIcon={<PhoneIcon size={16} />}
-                                                    sx={{ 
-                                                        color: 'primary.main', 
-                                                        fontWeight: 700, 
-                                                        textTransform: 'none',
-                                                        p: 0,
-                                                        minWidth: 0,
-                                                        '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
-                                                    }}
-                                                >
-                                                    Contact Now
-                                                </Button>
-                                            </Grid>
-                                        </Grid>
+                                            Contact Seeker
+                                        </Button>
                                     </Paper>
                                 </Grid>
                             ))}

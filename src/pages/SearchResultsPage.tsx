@@ -21,7 +21,7 @@ import { useInfiniteProperties } from '../hooks/useInfiniteProperties';
 import { SearchFilters } from '../components/search/SearchFilters';
 import { PRICE_RANGES, PROPERTY_TYPES } from '../data/mockData';
 
-export default function SearchResultsPage() {
+export default function SearchResultsPage({ initialData }: { initialData?: any }) {
     const [hasMounted, setHasMounted] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -114,20 +114,53 @@ export default function SearchResultsPage() {
         return params.toString();
     }, [appliedSearchQuery, appliedLocationQuery, category, subCategory, selectedTypes, priceRange, sortBy]);
 
+    // Format initialData for useInfiniteQuery structure
+    const formattedInitialData = useMemo(() => {
+        // If it's already formatted (unlikely now) or empty, return as is
+        if (!initialData) return undefined;
+        if (initialData.pages) return initialData;
+
+        // If it's a raw response with a data array, format it
+        if (initialData.data) {
+            return {
+                pages: [{
+                    data: initialData.data || [],
+                    nextPage: (initialData.data?.length === 20) ? 2 : undefined,
+                    total: initialData.total || initialData.data?.length || 0,
+                }],
+                pageParams: [1],
+            };
+        }
+        return undefined;
+    }, [initialData]);
+
     const { 
         data, 
         isLoading, 
+        isFetching,
         isFetchingNextPage, 
         hasNextPage, 
         fetchNextPage,
         status 
-    } = useInfiniteProperties(searchParamsString, { enabled: hasMounted });
+    } = useInfiniteProperties(searchParamsString, { 
+        enabled: hasMounted,
+        initialData: formattedInitialData
+    });
+
+    // Sequential pre-fetching: Load the next batch immediately after the first successful load
+    // so it's ready for instant display on scroll.
+    useEffect(() => {
+        if (status === 'success' && data?.pages.length === 1 && hasNextPage && !isFetchingNextPage) {
+            const timer = setTimeout(() => fetchNextPage(), 1000); // Small delay for smoothness
+            return () => clearTimeout(timer);
+        }
+    }, [status, data?.pages.length, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     const properties = useMemo(() => {
         return data?.pages.flatMap(page => page.data) || [];
     }, [data]);
 
-    const totalResults = data?.pages[0]?.total || 0;
+    const totalResults = data?.pages?.[0]?.total || 0;
 
     const handleSearchTrigger = useCallback(() => {
         setAppliedSearchQuery(searchQuery);
@@ -256,9 +289,10 @@ export default function SearchResultsPage() {
                     </Box>
                 </Box>
 
-                {isLoading ? (
-                    <Grid container spacing={3}>
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                {/* Show skeletons during initial load OR when transitioning filters (isFetching while status is success/pending) */}
+                {(isLoading || (isFetching && !isFetchingNextPage && properties.length > 0)) ? (
+                    <Grid container spacing={3} sx={{ opacity: isFetching && !isLoading ? 0.6 : 1, transition: 'opacity 0.2s' }}>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 12].map((i) => (
                             <Grid key={i} size={{ xs: 12, sm: 6, md: 3, lg: 3 }}>
                                 <PropertySkeleton />
                             </Grid>
@@ -281,8 +315,29 @@ export default function SearchResultsPage() {
                             ))}
                         </Grid>
                         
-                        <Box ref={observerTarget} sx={{ height: 100, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            {isFetchingNextPage && <CircularProgress size={24} />}
+                        <Box sx={{ mt: 6, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                            {hasNextPage && (
+                                <Button
+                                    variant="outlined"
+                                    size="large"
+                                    onClick={() => fetchNextPage()}
+                                    disabled={isFetchingNextPage}
+                                    sx={{ 
+                                        borderRadius: '12px', 
+                                        px: 6, 
+                                        py: 1.5,
+                                        fontWeight: 700,
+                                        borderWidth: 2,
+                                        '&:hover': { borderWidth: 2 }
+                                    }}
+                                >
+                                    {isFetchingNextPage ? 'Loading more...' : 'Load More Properties'}
+                                </Button>
+                            )}
+                            
+                            <Box ref={observerTarget} sx={{ height: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                {isFetchingNextPage && <CircularProgress size={24} color="primary" />}
+                            </Box>
                         </Box>
                     </>
                 )}

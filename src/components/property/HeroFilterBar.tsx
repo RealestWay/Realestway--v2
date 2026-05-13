@@ -250,7 +250,7 @@ export default function HeroFilterBar({ compact = false, initialValues = {}, onS
         </Box>
 
         <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1.5 }}>
-          <img src="/reviewer.png" alt="reviewers" style={{ height: 40, borderRadius: 4 }} />
+          <img src="/reviewer.png" alt="reviewers" style={{ height: 25, borderRadius: 4 }} />
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Box sx={{ color: '#f59e0b', fontSize: 14, lineHeight: 1 }}>★</Box>
             <Typography sx={{ fontSize: '0.82rem', fontWeight: 700, color: 'text.primary' }}>4.5</Typography>
