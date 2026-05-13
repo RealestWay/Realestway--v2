@@ -14,7 +14,8 @@ import {
     Skeleton,
     Pagination,
     Stack,
-    IconButton
+    IconButton,
+    Avatar
 } from '@mui/material';
 import { 
     Search as SearchIcon, 
